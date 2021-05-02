@@ -32,7 +32,7 @@ func Routes() *chi.Mux {
 		middleware.Recoverer,
 	)
 
-	router.Route("/internal", func(r chi.Router) {
+	router.Route("/developer-bot", func(r chi.Router) {
 		r.Mount("/"+internal.Version, internal.Routes())
 	})
 

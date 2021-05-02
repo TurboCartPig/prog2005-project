@@ -8,7 +8,7 @@ import (
 const Version = "V1"
 
 
-// Will set up all of the corona api's supplied endpoints.
+// Will set up all of the developer-bot supplied endpoints.
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 
