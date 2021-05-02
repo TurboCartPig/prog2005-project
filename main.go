@@ -14,6 +14,6 @@ func main() {
 	wg.Add(1)
 	go discord.RunBot(&wg)
 
-	// Wait for all gorutines to finish before exiting
+	// Wait for all goroutines to finish before exiting
 	wg.Wait()
 }

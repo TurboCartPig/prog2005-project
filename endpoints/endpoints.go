@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -55,7 +57,16 @@ func routes() *chi.Mux {
 	return router
 }
 
+//This should not be a global var, change it soon
+var webhooks []WebhookData
+
 func developer(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, http.StatusText(http.StatusNotImplemented), http.StatusNotImplemented)
+	var newWebhook WebhookData
+	err := json.NewDecoder(r.Body).Decode(&newWebhook)
+	if err != nil {
+		http.Error(w,err.Error(),http.StatusInternalServerError)
+	}
+	webhooks = append(webhooks,newWebhook)
+	fmt.Fprint(w,"")
 }
 
