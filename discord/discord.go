@@ -4,23 +4,26 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 
 	"developer-bot/discord/handlers"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
-func RunBot(wg *sync.WaitGroup) {
-	defer wg.Done() // Decrement wg AFTER sessing is closed
+type Message interface{}
 
-	// Setup notification from the os to stop the server
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+type MessageSend struct {
+	ChannelID string
+	Content   string
+}
+
+type Shutdown struct{}
+
+// RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
+func RunBot(incomming <-chan Message, wg *sync.WaitGroup) {
+	defer wg.Done() // Decrement wg AFTER sessing is closed
 
 	// Get the bot token and open a discord session with it
 	token := getToken()
@@ -45,8 +48,19 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 	defer session.Close()
 
-	// Wait until the server should stop
-	<-stop
+	for {
+		input := <-incomming
+		switch input.(type) {
+		case *MessageSend:
+			msg := input.(*MessageSend)
+			_, err := session.ChannelMessageSend(msg.ChannelID, msg.Content)
+			if err != nil {
+				log.Println("Failed to send message: ", err)
+			}
+		case Shutdown:
+			break
+		}
+	}
 }
 
 // getToken from either TOKEN or TOKEN_FILE environment variables.
