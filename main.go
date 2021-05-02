@@ -1,17 +1,19 @@
 package main
 
 import (
+	"developer-bot/discord"
 	"developer-bot/endpoints"
-	"os"
-	"os/signal"
-	"syscall"
+	"sync"
 )
 
 func main() {
+	var wg sync.WaitGroup
+
 	go endpoints.Serve()
 
-	// Wait for signal from the os before exiting
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-stop
+	wg.Add(1)
+	go discord.RunBot(&wg)
+
+	// Wait for all gorutines to finish before exiting
+	wg.Wait()
 }
