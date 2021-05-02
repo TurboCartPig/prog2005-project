@@ -23,8 +23,8 @@ type Shutdown struct{}
 
 var messages chan Message
 
-func SendMessage(channelid string, content string) {
-	messages <- &MessageSend{ChannelID: channelid, Content: content}
+func SendMessage(channelid, content string) {
+	messages <- MessageSend{ChannelID: channelid, Content: content}
 }
 
 // RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
@@ -58,10 +58,9 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 
 	for {
 		input := <-incomming
-		switch input.(type) {
-		case *MessageSend:
-			msg := input.(*MessageSend)
-			_, err := session.ChannelMessageSend(msg.ChannelID, msg.Content)
+		switch t := input.(type) {
+		case MessageSend:
+			_, err := session.ChannelMessageSend(t.ChannelID, t.Content)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}

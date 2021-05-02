@@ -8,7 +8,7 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
-	messages := make(chan discord.Message, 10)
+	messages := make(chan discord.Message)
 
 	go endpoints.Serve()
 
