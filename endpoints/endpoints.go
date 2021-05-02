@@ -1,4 +1,4 @@
-package internal
+package endpoints
 
 import (
 	"github.com/go-chi/chi"
@@ -12,7 +12,7 @@ const Version = "V1"
 func Routes() *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Post("/internal", developer)
+	router.Post("/endpoints", developer)
 
 	return router
 }

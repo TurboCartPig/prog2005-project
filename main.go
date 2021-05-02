@@ -1,7 +1,7 @@
 package main
 
 import (
-	"developer-bot/internal"
+	"developer-bot/endpoints"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -11,13 +11,10 @@ import (
 )
 
 func main() {
-
-
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-
 	router := Routes()
 
 	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(handler2 http.Handler) http.Handler) error {
@@ -41,7 +38,7 @@ func Routes() *chi.Mux {
 	)
 
 	router.Route("/developer-bot", func(r chi.Router) {
-		r.Mount("/"+internal.Version, internal.Routes())
+		r.Mount("/"+endpoints.Version, endpoints.Routes())
 	})
 
 	return router
