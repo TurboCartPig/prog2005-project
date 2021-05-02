@@ -7,9 +7,17 @@ import (
 	"github.com/go-chi/render"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+
+
+	var port = os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	router := Routes()
 
 	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(handler2 http.Handler) http.Handler) error {
@@ -20,7 +28,7 @@ func main() {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":" + port, router))
 }
 
 func Routes() *chi.Mux {
