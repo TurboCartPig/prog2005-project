@@ -21,9 +21,17 @@ type MessageSend struct {
 
 type Shutdown struct{}
 
+var messages chan Message
+
+func SendMessage(channelid string, content string) {
+	messages <- &MessageSend{ChannelID: channelid, Content: content}
+}
+
 // RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
-func RunBot(incomming <-chan Message, wg *sync.WaitGroup) {
+func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 	defer wg.Done() // Decrement wg AFTER sessing is closed
+
+	messages = incomming
 
 	// Get the bot token and open a discord session with it
 	token := getToken()
