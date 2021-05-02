@@ -1,0 +1,22 @@
+image: golang:latest
+
+stages:
+  - build
+  - lint
+
+build:
+  stage: build
+  script:
+    - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
+  artifacts:
+    paths:
+      - developer-bot
+
+lint:
+  stage: lint
+  before_script:
+    # binary will be $(go env GOPATH)/bin/golangci-lint
+    - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
+  script:
+    - golangci-lint run -v
+
