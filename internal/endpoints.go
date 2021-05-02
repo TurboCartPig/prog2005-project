@@ -19,5 +19,4 @@ func Routes() *chi.Mux {
 
 
 func developer(w http.ResponseWriter, r *http.Request){
-	return
 }
