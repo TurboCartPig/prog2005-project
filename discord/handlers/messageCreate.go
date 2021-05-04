@@ -18,20 +18,6 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 		return
 	}
 
-	// Check if the bot was mentioned in the message
-	mentioned := false
-	for _, user := range msg.Mentions {
-		if user.ID == s.State.User.ID {
-			mentioned = true
-			break
-		}
-	}
-
-	// We only respond to messages were we are mentioned
-	if !mentioned {
-		return
-	}
-
 	if strings.HasPrefix(msg.Content, "!") {
 		command := msg.Content[1:]
 
@@ -53,12 +39,4 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			// Unsubscribe from repo
 		}
 	}
-
-	// If the bot was mentioned, send a message back
-	// if mentioned {
-	// 	_, err := s.ChannelMessageSend(msg.ChannelID, "I'm a very friendly and nice bot, I would neeeeveer insults you, uwu")
-	// 	if err != nil {
-	// 		log.Println("Failed to send message: ", err)
-	// 	}
-	// }
 }
