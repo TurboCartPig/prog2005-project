@@ -25,9 +25,13 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			// Print help message
 			helpMessage := discordgo.MessageSend{
 				Embed: &discordgo.MessageEmbed{
-					Title:       "Developer-bot help instructions",
-					Description: "How to do stuff with developer-bot!\n1. Register the bot with GitLab according to readme.\n2. Subscribe to a GitLab project from the Discord channel where you want to receive notifications.\n3. ???\n4. Huge profit!",
-					Color:       16776960,
+					Title: "Developer-bot help instructions",
+					Description: "How to do stuff with developer-bot!\n" +
+						"1. Register the bot with GitLab according to readme.\n" +
+						"2. Subscribe to a GitLab project from the Discord channel where you want to receive notifications.\n" +
+						"3. ???\n" +
+						"4. Huge profit!",
+					Color: 16776960,
 					Fields: []*discordgo.MessageEmbedField{
 						{
 							Name:   "!help",
@@ -35,13 +39,18 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 							Inline: false,
 						},
 						{
-							Name:   "!sub <gitlab repo url>",
-							Value:  "Subscribe to a GitLab project and receive notifications when deadlines are posted. The notificatoins will appear only in the Discord channel that subscribed to them.\n\nExample: `!sub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
+							Name: "!sub <gitlab repo url>",
+							Value: "Subscribe to a GitLab project and receive notifications when deadlines are posted" +
+								". The notificatoins will appear only in the Discord channel that subscribed to them." +
+								"\n\n" +
+								"Example: `!sub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
 							Inline: false,
 						},
 						{
-							Name:   "!unsub <gitlab repo url>",
-							Value:  "Unsubscribe from a GitLab project.\n\nExample: `!unsub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
+							Name: "!unsub <gitlab repo url>",
+							Value: "Unsubscribe from a GitLab project." +
+								"\n\n" +
+								"Example: `!unsub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
 							Inline: false,
 						},
 					},
