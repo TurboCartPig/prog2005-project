@@ -4,8 +4,9 @@ import (
 	"context"
 	"developer-bot/endpoints/types"
 	"fmt"
-	"google.golang.org/api/iterator"
 	"log"
+
+	"google.golang.org/api/iterator"
 
 	"cloud.google.com/go/firestore"
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
@@ -71,11 +72,12 @@ func GetChannelIDByRepoURL(repoURL string) string {
 			break
 		}
 	}
+
 	if cr.ChannelID != "" {
 		return cr.ChannelID
-	} else {
-		return ""
 	}
+
+	return ""
 }
 
 // GetBotToken gets the discord bot token from google cloud's secret manager.

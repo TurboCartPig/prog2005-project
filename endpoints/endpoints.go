@@ -5,12 +5,14 @@ import (
 	"developer-bot/endpoints/firestore"
 	"encoding/json"
 	"fmt"
-	"github.com/bwmarrin/discordgo"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/bwmarrin/discordgo"
+
 	"developer-bot/endpoints/types"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
