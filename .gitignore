@@ -138,5 +138,9 @@ tags
 .ionide
 
 ### Secrets ###
+
+# dotenv
 .env
-.token
+
+# Service acctount key
+*.json
