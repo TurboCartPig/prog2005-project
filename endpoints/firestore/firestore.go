@@ -35,7 +35,6 @@ func ShutdownClient() {
 	client.Close()
 }
 
-
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
 	_, _, err := client.Collection("deadlines").Add(ctx, *deadline)
