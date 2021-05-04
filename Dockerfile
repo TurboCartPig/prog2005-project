@@ -21,5 +21,11 @@ RUN go build \
 ##################################################
 FROM alpine:3.13
 
+# Metadata
+LABEL maintainer="denniskr@stud.ntnu.no"
+EXPOSE 80
+
+# Copy final binariy from build image,
+# and run it by default when the container starts
 COPY --from=build /app/bin/developer-bot /app/bin/developer-bot
 CMD ["/app/bin/developer-bot"]
