@@ -4,14 +4,13 @@ stages:
   - lint
 
 # Define the build stage
+# FIXME: alpine based golang images gives error here, but not in Dockerfile. WTF?
+# NOTE:  One diff is -race
 build:
   stage: build
   image: golang:1.16
   script:
     - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
-  artifacts:
-    paths:
-      - developer-bot
 
 # Define the linting stage
 lint:
