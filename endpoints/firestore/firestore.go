@@ -35,14 +35,6 @@ func ShutdownClient() {
 	client.Close()
 }
 
-// Saves webhook data from gitlab to firestore.
-func SaveWebhookToFirestore(webhook *types.WebhookData) {
-	ctx := context.Background()
-	_, _, err := client.Collection("deadlines").Add(ctx, *webhook)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
 
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
@@ -55,7 +47,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
-	_, _, err := client.Collection("channel-registrations").Add(ctx, *channelRegistration)
+	_, err := client.Collection("channel-registrations").Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -65,7 +57,6 @@ func GetChannelIDByRepoURL(repoURL string) string {
 	ctx := context.Background()
 	iter := client.Collection("channel-registrations").Where("RepoWebURL", "==", repoURL).Documents(ctx)
 
-	fmt.Println(repoURL)
 	var cr types.ChannelRegistration
 	for {
 		doc, err := iter.Next()
@@ -77,7 +68,6 @@ func GetChannelIDByRepoURL(repoURL string) string {
 			break
 		}
 		err = doc.DataTo(&cr)
-		fmt.Println(cr)
 		if err != nil {
 			break
 		}

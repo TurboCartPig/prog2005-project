@@ -59,7 +59,7 @@ func routes() *chi.Mux {
 		middleware.Recoverer,
 	)
 
-	router.Post("/endpoints", developer)
+	router.Post("/developer", developer)
 
 	return router
 }
