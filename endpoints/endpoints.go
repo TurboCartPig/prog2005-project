@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"developer-bot/discord"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -64,9 +65,12 @@ func developer(w http.ResponseWriter, r *http.Request) {
 	var newWebhook WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
 	if err != nil {
-		http.Error(w,err.Error(),http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	webhooks = append(webhooks,newWebhook)
-	fmt.Fprint(w,"")
-}
+	webhooks = append(webhooks, newWebhook)
+	fmt.Fprint(w, "")
 
+	discord.SendMessage("833465870872608788", "Hei")
+
+	w.WriteHeader(http.StatusOK)
+}

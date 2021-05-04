@@ -8,11 +8,12 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
+	messages := make(chan discord.Message)
 
 	go endpoints.Serve()
 
 	wg.Add(1)
-	go discord.RunBot(&wg)
+	go discord.RunBot(messages, &wg)
 
 	// Wait for all goroutines to finish before exiting
 	wg.Wait()
