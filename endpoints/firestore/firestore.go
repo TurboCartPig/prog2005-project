@@ -63,8 +63,9 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 
 func GetChannelIDByRepoURL(repoURL string) string {
 	ctx := context.Background()
-	iter := client.Collection("channel-registrations").Where("RepoWebUrl","==",repoURL).Documents(ctx)
+	iter := client.Collection("channel-registrations").Where("RepoWebURL","==",repoURL).Documents(ctx)
 
+	fmt.Println(repoURL)
 	var cr types.ChannelRegistration
 	for  {
 		doc, err := iter.Next()
@@ -76,11 +77,16 @@ func GetChannelIDByRepoURL(repoURL string) string {
 			break
 		}
 		err = doc.DataTo(&cr)
+		fmt.Println(cr)
 		if err != nil {
 			break
 		}
 	}
-	return cr.ChannelID
+	if cr.ChannelID != "" {
+		return cr.ChannelID
+	} else {
+		return ""
+	}
 }
 
 // GetBotToken gets the discord bot token from google cloud's secret manager.
