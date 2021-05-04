@@ -13,11 +13,11 @@ build:
   stage: build
   image: golang:1.16
   script:
-    # Setup a persistent cache
+    -  # Setup a persistent cache
     - export GOCACHE=$CI_PROJECT_DIR/.cache/gocache
-    # Populate the cache with dependencies
+    -  # Populate the cache with dependencies
     - go mod download
-    # Build the project
+    -  # Build the project
     - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
   cache:
     key: build-cache
@@ -29,5 +29,5 @@ lint:
   stage: lint
   image: golangci/golangci-lint:v1.39
   script:
+    -  # Run linting
     - golangci-lint run -v --timeout "10m"
-
