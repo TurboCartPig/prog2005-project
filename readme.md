@@ -1,5 +1,13 @@
 # Developer bot
 
+This is a Discord bot with two main pieces of functionality. It can extract deadlines from GitLab issue tracker. And it can create decision polls on special issues in GitLab. It does this by using GitLab's webhook interface, in order to receive data from GitLab, and simultaneously runs a discord bot, that facilitates user interaction.
+
+Deadlines:
+> TODO: Specify how deadlines work and how to interact with them
+
+Decisions:
+> TODO: Specify how decisions work and how to interact with them
+
 # Development
 
 The program assumes that on of two environment variables are set; TOKEN or TOKEN_FILE. If TOKEN is set then that will be used as the bot token. If TOKEN_FILE is set then the file it points to will be read and used as the bot token. Keep in mind how insecure it is to keep this env var set when running untrusted programs from the same shell, and only leave it set for the minimum time possible.
