@@ -74,8 +74,32 @@ func developer(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, "Working")
 
-	firestore.SaveWebhookToFirestore(&newWebhook)
+
+    processWebhook(&newWebhook)
 	discord.SendMessage("833465870872608788", "Hei")
 
 	w.WriteHeader(http.StatusOK)
+}
+
+
+func processWebhook(webhook *types.WebhookData) {
+	if isDeadline(webhook) {
+		deadline := types.Deadline{
+			RepoWebURL:  webhook.Project.WebURL,
+			Title:       webhook.ObjectAttributes.Title,
+			Description: webhook.ObjectAttributes.Description,
+			DueDate:     webhook.ObjectAttributes.DueDate,
+		}
+		firestore.SaveDeadlineToFirestore(&deadline)
+		// TODO: Print this deadline to discord
+	}
+}
+
+func isDeadline(webhook *types.WebhookData) bool {
+	for _, label := range webhook.Labels {
+		if label.Title == "deadline" {
+			return true
+		}
+	}
+	return false
 }

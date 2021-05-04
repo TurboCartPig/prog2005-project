@@ -43,6 +43,15 @@ func SaveWebhookToFirestore(webhook *types.WebhookData) {
 	}
 }
 
+func SaveDeadlineToFirestore(deadline *types.Deadline) {
+	ctx := context.Background()
+	_,_,err := client.Collection("deadlines").Add(ctx,*deadline)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
 	_, _, err := client.Collection("channel-registrations").Add(ctx, *channelRegistration)
