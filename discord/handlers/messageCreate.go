@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/bwmarrin/discordgo"
+	"developer-bot/endpoints/firestore"
 )
 
 // MessageCreate handles messages being sent in any channel the bot has access to.

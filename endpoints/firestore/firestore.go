@@ -38,6 +38,14 @@ func SaveWebhookToFirestore(webhook *types.WebhookData) {
 	}
 }
 
+func SaveChannelRegistration (channelRegistration *types.ChannelRegistration) {
+	ctx := context.Background()
+	_, _, err := client.Collection("channel-registrations").Add(ctx, *channelRegistration)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 // GetBotToken gets the discord bot token from google cloud's secret manager.
 func GetBotToken() (string, error) {
 	// The name/path to the secret stored in google cloud's secret manager.
