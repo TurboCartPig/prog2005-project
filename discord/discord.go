@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"developer-bot/discord/handlers"
+	"developer-bot/endpoints/firestore"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -34,7 +35,12 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 	messages = incomming
 
 	// Get the bot token and open a discord session with it
-	token := getToken()
+	// token := getToken()
+	token, err := firestore.GetBotToken()
+	if err != nil {
+		return
+	}
+
 	session, err := discordgo.New("Bot " + token)
 	if err != nil {
 		log.Println("Failed to create a discord session\n", err)
