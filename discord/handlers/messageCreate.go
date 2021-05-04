@@ -11,8 +11,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-const HelpMessage = "Help!!!!"
-
 // MessageCreate handles messages being sent in any channel the bot has access to.
 func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	// Ignore messages sent by the bot itself
@@ -25,7 +23,31 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 
 		if strings.HasPrefix(command, "help") {
 			// Print help message
-			_, err := s.ChannelMessageSend(msg.ChannelID, HelpMessage)
+			helpMessage := discordgo.MessageSend{
+				Embed: &discordgo.MessageEmbed{
+					Title:       "Developer-bot help instructions",
+					Description: "How to do stuff with developer-bot!\n1. Register the bot with GitLab according to readme.\n2. Subscribe to a GitLab project from the Discord channel where you want to receive notifications.\n3. ???\n4. Huge profit!",
+					Color:       16776960,
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:   "!help",
+							Value:  "Print this help message",
+							Inline: false,
+						},
+						{
+							Name:   "!sub <gitlab repo url>",
+							Value:  "Subscribe to a GitLab project and receive notifications when deadlines are posted. The notificatoins will appear only in the Discord channel that subscribed to them.\n\nExample: `!sub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
+							Inline: false,
+						},
+						{
+							Name:   "!unsub <gitlab repo url>",
+							Value:  "Unsubscribe from a GitLab project.\n\nExample: `!unsub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
+							Inline: false,
+						},
+					},
+				},
+			}
+			_, err := s.ChannelMessageSendComplex(msg.ChannelID, &helpMessage)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
