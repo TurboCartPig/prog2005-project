@@ -4,6 +4,7 @@ import (
 	"context"
 	"developer-bot/endpoints/types"
 	"fmt"
+	"google.golang.org/api/iterator"
 	"log"
 
 	"cloud.google.com/go/firestore"
@@ -58,6 +59,28 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func GetChannelIDByRepoURL(repoURL string) string {
+	ctx := context.Background()
+	iter := client.Collection("channel-registrations").Where("RepoWebUrl","==",repoURL).Documents(ctx)
+
+	var cr types.ChannelRegistration
+	for  {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+		err = doc.DataTo(&cr)
+		if err != nil {
+			break
+		}
+	}
+	return cr.ChannelID
 }
 
 // GetBotToken gets the discord bot token from google cloud's secret manager.

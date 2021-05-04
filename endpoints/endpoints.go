@@ -87,24 +87,29 @@ func processWebhook(webhook *types.WebhookData) {
 			IssueWebURL: webhook.ObjectAttributes.Url,
 		}
 		firestore.SaveDeadlineToFirestore(&deadline)
-		discordMessage := discordgo.MessageSend{
-			Content: "New deadline posted:",
-			Embed: &discordgo.MessageEmbed{
-				URL:         deadline.IssueWebURL,
-				Title:       deadline.Title,
-				Description: deadline.Description,
-				Color:       15158332,
-				Fields: []*discordgo.MessageEmbedField {
-					{
-						Name:   "DUE DATE",
-						Value:  deadline.DueDate,
-						Inline: false,
-					},
+		sendMessageToDiscord(&deadline)
+	}
+}
+
+func sendMessageToDiscord(deadline *types.Deadline) {
+	discordMessage := discordgo.MessageSend{
+		Content: "New deadline posted:",
+		Embed: &discordgo.MessageEmbed{
+			URL:         deadline.IssueWebURL,
+			Title:       deadline.Title,
+			Description: deadline.Description,
+			Color:       15158332,
+			Fields: []*discordgo.MessageEmbedField {
+				{
+					Name:   "DUE DATE",
+					Value:  deadline.DueDate,
+					Inline: false,
 				},
 			},
-		}
-		discord.SendComplexMessage("833465870872608788", &discordMessage)
+		},
 	}
+	channelID := firestore.GetChannelIDByRepoURL(deadline.RepoWebURL)
+	discord.SendComplexMessage(channelID, &discordMessage)
 }
 
 func isDeadline(webhook *types.WebhookData) bool {
