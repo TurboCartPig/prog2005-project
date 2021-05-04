@@ -99,7 +99,7 @@ func sendMessageToDiscord(deadline *types.Deadline) {
 			Title:       deadline.Title,
 			Description: deadline.Description,
 			Color:       15158332,
-			Fields: []*discordgo.MessageEmbedField {
+			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:   "DUE DATE",
 					Value:  deadline.DueDate,

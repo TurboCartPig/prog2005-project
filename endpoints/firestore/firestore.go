@@ -46,7 +46,7 @@ func SaveWebhookToFirestore(webhook *types.WebhookData) {
 
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
-	_,_,err := client.Collection("deadlines").Add(ctx,*deadline)
+	_, _, err := client.Collection("deadlines").Add(ctx, *deadline)
 
 	if err != nil {
 		fmt.Println(err)
@@ -63,11 +63,11 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 
 func GetChannelIDByRepoURL(repoURL string) string {
 	ctx := context.Background()
-	iter := client.Collection("channel-registrations").Where("RepoWebURL","==",repoURL).Documents(ctx)
+	iter := client.Collection("channel-registrations").Where("RepoWebURL", "==", repoURL).Documents(ctx)
 
 	fmt.Println(repoURL)
 	var cr types.ChannelRegistration
-	for  {
+	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
