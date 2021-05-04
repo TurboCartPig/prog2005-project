@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
-	"github.com/bwmarrin/discordgo"
 	"developer-bot/endpoints/firestore"
 	"developer-bot/endpoints/types"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 const HelpMessage = "Help!!!!"
@@ -27,7 +29,7 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-		} else if strings.HasPrefix(command, "sub") {
+		} else if strings.HasPrefix(command, "sub ") {
 			// Subscribe to gitlab repo notifications
 			url := command[4:]
 			chReg := types.ChannelRegistration{
@@ -35,8 +37,14 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 				RepoWebURL: url,
 			}
 			firestore.SaveChannelRegistration(&chReg)
-		} else if strings.HasPrefix(command, "unsub") {
+
+			log.Printf("subscribeing from a channel at %s", url)
+			s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Subscribing to %s", url))
+		} else if strings.HasPrefix(command, "unsub ") {
+			url := command[6:]
 			// Unsubscribe from repo
+			log.Printf("unsubscribeing from a channel at %s", url)
+			s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Unsubscribing from %s", url))
 		}
 	}
 }
