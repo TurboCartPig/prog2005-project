@@ -42,7 +42,7 @@ func Serve() {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
 
-	// Create a new firestore client in the firestore package. 
+	// Create a new firestore client in the firestore package.
 	firestore.NewFirestoreClient()
 
 	log.Fatal(http.ListenAndServe(":"+port, router))
@@ -84,7 +84,7 @@ func processWebhook(webhook *types.WebhookData) {
 			Title:       webhook.ObjectAttributes.Title,
 			Description: webhook.ObjectAttributes.Description,
 			DueDate:     webhook.ObjectAttributes.DueDate,
-			IssueWebURL: webhook.ObjectAttributes.Url,
+			IssueWebURL: webhook.ObjectAttributes.URL,
 		}
 		firestore.SaveDeadlineToFirestore(&deadline)
 		sendMessageToDiscord(&deadline)
@@ -99,7 +99,7 @@ func sendMessageToDiscord(deadline *types.Deadline) {
 			Title:       deadline.Title,
 			Description: deadline.Description,
 			Color:       15158332,
-			Fields: []*discordgo.MessageEmbedField {
+			Fields: []*discordgo.MessageEmbedField{
 				{
 					Name:   "DUE DATE",
 					Value:  deadline.DueDate,

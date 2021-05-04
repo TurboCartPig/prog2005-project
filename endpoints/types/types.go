@@ -16,7 +16,7 @@ type WebhookData struct {
 		DueDate     string   `json:"due_date"`
 		ProjectID   int      `json:"project_id"`
 		Labels      []Labels `json:"labels"`
-		Url         string   `json:"url"`
+		URL         string   `json:"url"`
 	} `json:"object_attributes"`
 	Labels     []Labels `json:"labels"`
 	Repository struct {
