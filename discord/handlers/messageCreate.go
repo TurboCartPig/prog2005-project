@@ -31,7 +31,7 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 						"2. Subscribe to a GitLab project from the Discord channel where you want to receive notifications.\n" +
 						"3. ???\n" +
 						"4. Huge profit!",
-					Color: 16776960,
+					Color: 1752220,
 					Fields: []*discordgo.MessageEmbedField{
 						{
 							Name:   "!help",
@@ -41,7 +41,7 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 						{
 							Name: "!sub <gitlab repo url>",
 							Value: "Subscribe to a GitLab project and receive notifications when deadlines are posted" +
-								". The notificatoins will appear only in the Discord channel that subscribed to them." +
+								". The notifications will appear only in the Discord channel that subscribed to them." +
 								"\n\n" +
 								"Example: `!sub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
 							Inline: false,
