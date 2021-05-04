@@ -10,13 +10,9 @@ Decisions:
 
 # Development
 
-The program assumes that on of two environment variables are set; TOKEN or TOKEN_FILE. If TOKEN is set then that will be used as the bot token. If TOKEN_FILE is set then the file it points to will be read and used as the bot token. Keep in mind how insecure it is to keep this env var set when running untrusted programs from the same shell, and only leave it set for the minimum time possible.
+The development of this project is centered around docker-compose and containerization. You *can* build the server as a binary manually, but you will have a more difficult time deploying it.
 
-Optionally you can also set PORT to override the port the REST API is served on. The default is 8080.
-
-It is recommended to set up a `.env` file where you store your variables and use a dotenv cli to load these only when they are needed and you are running trusted code. You can then us the `--env-file .env` option with docker to source the file inside the container.
-
-> TODO: Change instructions to accommodate dotenv file
+Both the docker-compose setup and a manual setup requires the presence of a `service-account-key.json` from GCP. This is used both to authorize Firestore and Google Cloud's Secret Manager, the latter is where the Discord bot token is stored and accessed securely. The account key requires the roles `INSERT FIRESTORE ADMIN ROLE` and `INSERT SECRET MANAGER SECRET ACCESSOR ROLE`. The key is discovered from the environment variable `GOOGLE_APPLICATION_CREDENTIALS`, which contains a path pointing to the service key, default should be `./service-account-key.json`. This is made available to the container through docker-compose's secrets or GCP's provisioning.
 
 ## Building
 
@@ -31,31 +27,61 @@ go build -o bin/developer-bot
 
 To run:
 ```bash
-TOKEN=<...> ./bin/developer-bot
+./bin/developer-bot
 ```
 
 Or build and run in one with:
 ```bash
-TOKEN=<...> go run
+go run
 ```
 
 ### With Docker
 
 To build an image:
 ```bash
-docker build -t developer-bot .
+docker-compose build
 ```
 
 To run a container based on built image
 ```bash
-docker run --rm -it -e TOKEN=<...> developer-bot
+docker-compose up -d
 ```
+
+You can also build and run the container all in one go:
+```bash
+docker-compose up -d --build
+```
+
+## CI
+
+> Explain the CI config
 
 # Deployment
 
 There are a few considerations to take into account when considering how to deploy the bot. Mainly how it's built, how to run it and keep it running, and how to configure access to the secret token.
 
+## GCP via Container optimized OS
+
+This is the config the current deployment uses.
+
+- Create a new service account with the following roles: ...
+- Build the docker image locally and upload it to your preferred container registry
+- Create a new VM instance in GCP
+- Select deploy container
+- Fill in the URL to your container image
+- Select a container optimized OS
+- Select the service account you just created
+- Select allow http traffic
+- Click start VM. Everything is automatic from here
+
+## Manually on OpenStack or other IaaS solution
+
+- Manually copy over a service account key
+- Deploy using docker-compose
+
 ## Heroku
+
+The current stack can not be deployed to heroku, due to heroku's poor handling of secrets. These were the instructions back when it worked.
 
 There are two main methods for deploying the app to Heroku. The default Heroku way, using the heroku-20 stack. Or by deploying the app as a container using the container stack. The default way is configured by the `Procfile`, and the container way is configured by `heroko.yml` and the `Dockerfile`.
 
@@ -78,11 +104,3 @@ heroku stack:set container
 # Redeploy
 git push heroku main
 ```
-
-## GCP via Container optimized OS
-
-> TODO
-
-## Manually on OpenStack or other IaaS solution
-
-> TODO

@@ -3,20 +3,31 @@ stages:
   - build
   - lint
 
+# TODO: - build-docker
+# TODO: - deploy-docker
+
 # Define the build stage
+# FIXME: alpine based golang images gives error here, but not in Dockerfile. WTF?
+# NOTE:  One diff is -race
 build:
   stage: build
   image: golang:1.16
   script:
+    # Setup a persistent cache
+    - export GOCACHE=$CI_PROJECT_DIR/.cache/gocache
+    # Populate the cache with dependencies
+    - go mod download
+    # Build the project
     - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
-  artifacts:
+  cache:
+    key: build-cache
     paths:
-      - developer-bot
+      - .cache/
 
 # Define the linting stage
 lint:
   stage: lint
-  image: golangci/golangci-lint:v1.39-alpine
+  image: golangci/golangci-lint:v1.39
   script:
-    - golangci-lint run -v
+    - golangci-lint run -v --timeout "10m"
 
