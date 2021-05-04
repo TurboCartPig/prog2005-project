@@ -19,17 +19,20 @@ type MessageSend struct {
 
 type Shutdown struct{}
 
-var messages chan Message
+var messages = make(chan Message)
 
 func SendMessage(channelid, content string) {
 	messages <- MessageSend{ChannelID: channelid, Content: content}
 }
 
-// RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
-func RunBot(incomming chan Message, wg *sync.WaitGroup) {
-	defer wg.Done() // Decrement wg AFTER sessing is closed
+func SendShutdown() {
+	messages <- Shutdown{}
+}
 
-	messages = incomming
+// RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
+func RunBot(wg *sync.WaitGroup) {
+	defer log.Println("Discord bot shut down")
+	defer wg.Done() // Decrement wg AFTER sessing is closed
 
 	// Get the bot token and open a discord session with it
 	token, err := firestore.GetBotToken()
@@ -59,7 +62,7 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 	defer session.Close()
 
 	for {
-		input := <-incomming
+		input := <-messages
 		switch t := input.(type) {
 		case MessageSend:
 			_, err := session.ChannelMessageSend(t.ChannelID, t.Content)
@@ -67,7 +70,7 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 				log.Println("Failed to send message: ", err)
 			}
 		case Shutdown:
-			break
+			return
 		}
 	}
 }
