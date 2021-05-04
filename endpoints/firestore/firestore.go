@@ -18,6 +18,7 @@ var client *firestore.Client
 
 const (
 	ChannelRegistrationsCollection = "channel-registrations"
+	DeadlinesCollection            = "deadlines"
 )
 
 // NewFirestoreClient creates and initializes a new firestore client.
@@ -42,7 +43,7 @@ func ShutdownClient() {
 
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
-	_, _, err := client.Collection("deadlines").Add(ctx, *deadline)
+	_, _, err := client.Collection(DeadlinesCollection).Add(ctx, *deadline)
 
 	if err != nil {
 		fmt.Println(err)
@@ -51,7 +52,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
-	_, err := client.Collection("channel-registrations").Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
+	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
 	if err != nil {
 		fmt.Println(err)
 	}
