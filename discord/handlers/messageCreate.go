@@ -29,7 +29,7 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 		} else if strings.HasPrefix(command, "sub") {
 			// Subscribe to gitlab repo notifications
-			url := command[2:]
+			url := command[4:]
 			chReg := types.ChannelRegistration{
 				ChannelID:  msg.ChannelID,
 				RepoWebURL: url,
