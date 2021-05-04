@@ -1,4 +1,4 @@
-package endpoints
+package types
 
 type WebhookData struct {
 	EventType string `json:"event_type"`

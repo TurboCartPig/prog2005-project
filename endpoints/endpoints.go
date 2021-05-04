@@ -2,12 +2,14 @@ package endpoints
 
 import (
 	"developer-bot/discord"
+	"developer-bot/endpoints/firestore"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"developer-bot/endpoints/types"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
@@ -26,6 +28,7 @@ func getPort() string {
 	return port
 }
 
+
 // Serve the REST API over HTTP
 func Serve() {
 	port := getPort()
@@ -38,6 +41,9 @@ func Serve() {
 	if err := chi.Walk(router, walkFunc); err != nil {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
+
+	// Create a new firestore client in the firestore package. 
+	firestore.NewFirestoreClient()
 
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
@@ -58,18 +64,17 @@ func routes() *chi.Mux {
 	return router
 }
 
-// This should not be a global var, change it soon
-var webhooks []WebhookData
 
 func developer(w http.ResponseWriter, r *http.Request) {
-	var newWebhook WebhookData
+	var newWebhook types.WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	webhooks = append(webhooks, newWebhook)
+
 	fmt.Fprint(w, "")
 
+	firestore.SaveWebhookToFirestore(&newWebhook)
 	discord.SendMessage("833465870872608788", "Hei")
 
 	w.WriteHeader(http.StatusOK)
