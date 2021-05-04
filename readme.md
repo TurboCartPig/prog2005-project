@@ -54,7 +54,14 @@ docker-compose up -d --build
 
 ## CI
 
-> Explain the CI config
+This project uses a GitLab's CI pipelines to validate the state of the project and to produce artifacts. The CI consists of multiple stages, the descriptions of which you can find below. The purpose of the CI is to catch errors as early as possible, to do regression testing, and to prevent faulty code from going into production. The CI as configured caches all that it can quite aggressively, in order to increase performance and save on network bandwidth. This is necessary as the runner is hosted on Skyhigh, and is quite resource constrained.
+
+1. Build stage - Builds the project as a normal Go binary, just to make sure there are no config issues or trivial mistakes in syntax.
+2. Lint stage - More detailed analysis of the code to find common mistakes and anti-patterns.
+
+Stages yet to be added:
+3. Docker build stage - Build the project as a Docker container, via Dockerfile or docker-compose.
+4. Deployment stage - Deploy the docker image built in the previous stage.
 
 # Deployment
 
