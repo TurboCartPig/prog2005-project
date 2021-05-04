@@ -22,7 +22,7 @@ const Version = "v1"
 func getPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "80"
 	}
 
 	return port
@@ -72,7 +72,7 @@ func developer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	fmt.Fprint(w, "")
+	fmt.Fprint(w, "Working")
 
 	firestore.SaveWebhookToFirestore(&newWebhook)
 	discord.SendMessage("833465870872608788", "Hei")
