@@ -11,14 +11,14 @@ type WebhookData struct {
 		DefaultBranch string `json:"default_branch"`
 	} `json:"project"`
 	ObjectAttributes struct {
-		Title               string        `json:"title"`
-		Description         string        `json:"description"`
-		AuthorID            int           `json:"author_id"`
-		DueDate             string        `json:"due_date"`
-		ProjectID           int           `json:"project_id"`
-		Labels              []Labels      `json:"labels"`
+		Title       string   `json:"title"`
+		Description string   `json:"description"`
+		AuthorID    int      `json:"author_id"`
+		DueDate     string   `json:"due_date"`
+		ProjectID   int      `json:"project_id"`
+		Labels      []Labels `json:"labels"`
 	} `json:"object_attributes"`
-	Labels     []Labels    `json:"labels"`
+	Labels     []Labels `json:"labels"`
 	Repository struct {
 		Name        string `json:"name"`
 		URL         string `json:"url"`
