@@ -29,6 +29,11 @@ func NewFirestoreClient() {
 	}
 }
 
+// ShutdownClient the firebase client.
+func ShutdownClient() {
+	client.Close()
+}
+
 // Saves webhook data from gitlab to firestore.
 func SaveWebhookToFirestore(webhook *types.WebhookData) {
 	ctx := context.Background()
@@ -38,7 +43,7 @@ func SaveWebhookToFirestore(webhook *types.WebhookData) {
 	}
 }
 
-func SaveChannelRegistration (channelRegistration *types.ChannelRegistration) {
+func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
 	_, _, err := client.Collection("channel-registrations").Add(ctx, *channelRegistration)
 	if err != nil {
@@ -58,6 +63,7 @@ func GetBotToken() (string, error) {
 		log.Printf("failed to create secretmanager client: %v", err)
 		return "", err
 	}
+	defer client.Close()
 
 	// Build the request.
 	req := &secretmanagerpb.AccessSecretVersionRequest{
@@ -73,4 +79,3 @@ func GetBotToken() (string, error) {
 
 	return string(result.Payload.Data), nil
 }
-

@@ -3,6 +3,7 @@ package main
 import (
 	"developer-bot/discord"
 	"developer-bot/endpoints"
+	"developer-bot/endpoints/firestore"
 	"os"
 	"os/signal"
 	"sync"
@@ -23,6 +24,7 @@ func main() {
 	<-stop
 
 	discord.SendShutdown()
+	firestore.ShutdownClient()
 
 	// Wait for all goroutines to finish before exiting
 	wg.Wait()
