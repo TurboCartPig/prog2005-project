@@ -16,6 +16,10 @@ import (
 
 var client *firestore.Client
 
+const (
+	ChannelRegistrationsCollection = "channel-registrations"
+)
+
 // NewFirestoreClient creates and initializes a new firestore client.
 func NewFirestoreClient() {
 	// Use GOOGLE_APPLICATION_CREDENTIALS env var to find the service account key
@@ -55,7 +59,7 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 
 func GetChannelIDByRepoURL(repoURL string) string {
 	ctx := context.Background()
-	iter := client.Collection("channel-registrations").Where("RepoWebURL", "==", repoURL).Documents(ctx)
+	iter := client.Collection(ChannelRegistrationsCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
 
 	var cr types.ChannelRegistration
 	for {
@@ -78,6 +82,12 @@ func GetChannelIDByRepoURL(repoURL string) string {
 	}
 
 	return ""
+}
+
+func DeleteChannelRegistations(channelID string) error {
+	ctx := context.Background()
+	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)
+	return err
 }
 
 // GetBotToken gets the discord bot token from google cloud's secret manager.
