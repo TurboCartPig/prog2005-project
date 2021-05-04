@@ -52,6 +52,11 @@ You can also build and run the container all in one go:
 docker-compose up -d --build
 ```
 
+And to shut the container down:
+```bash
+docker-compose down
+```
+
 ## CI
 
 This project uses a GitLab's CI pipelines to validate the state of the project and to produce artifacts. The CI consists of multiple stages, the descriptions of which you can find below. The purpose of the CI is to catch errors as early as possible, to do regression testing, and to prevent faulty code from going into production. The CI as configured caches all that it can quite aggressively, in order to increase performance and save on network bandwidth. This is necessary as the runner is hosted on Skyhigh, and is quite resource constrained.
@@ -111,3 +116,7 @@ heroku stack:set container
 # Redeploy
 git push heroku main
 ```
+
+## Security
+
+Quite a lot of time was spent figuring out how to deploy, and preferably develop, this project with security in mind. We considered any security through obscurity to be unacceptable. So hard coding or environment variables are out the door. We explored using HashiCorp Vault and many other similar products, before finally settling on using GCP's built in security features. Namely service accounts and the secrets manager. Here we set up granular permissions via service accounts. And securely store the discord bot token with encryption at rest and in transit. The service account key necessary to facilitate authentication and secure communicating is passed into the container with use of docker's built in secrets mechanisms, and works the same way when developing, as when deploying. This setup provides both a good level of security, and is relatively comfortable while developing.
