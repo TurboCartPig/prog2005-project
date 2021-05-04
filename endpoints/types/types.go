@@ -4,10 +4,10 @@ type WebhookData struct {
 	EventType string `json:"event_type"`
 	User      User   `json:"user"`
 	Project   struct {
-		ID            int    `json:"id"`
-		Name          string `json:"name"`
-		Description   string `json:"description"`
-		WebURL        string `json:"web_url"`
+		ID          int    `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		WebURL      string `json:"web_url"`
 	} `json:"project"`
 	ObjectAttributes struct {
 		Title       string   `json:"title"`
@@ -40,4 +40,16 @@ type Labels struct {
 	Description interface{} `json:"description"`
 	Type        string      `json:"type"`
 	GroupID     interface{} `json:"group_id"`
+}
+
+type ChannelRegistration struct {
+	ChannelID  string `json:"channel_id"`
+	RepoWebURL string `json:"repo_web_url"`
+}
+
+type Deadline struct {
+	RepoWebURL  string `json:"repo_web_url"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	DueDate     string `json:"due_date"`
 }
