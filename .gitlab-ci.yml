@@ -29,5 +29,5 @@ lint:
   stage: lint
   image: golangci/golangci-lint:v1.39
   script:
-    - golangci-lint run -v
+    - golangci-lint run -v --timeout "10m"
 
