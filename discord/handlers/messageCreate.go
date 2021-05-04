@@ -38,13 +38,13 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 			firestore.SaveChannelRegistration(&chReg)
 
-			log.Printf("subscribeing from a channel at %s", url)
-			s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Subscribing to %s", url))
+			log.Printf("subscribing from a channel at %s", url)
+			_, _ = s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Subscribing to %s", url))
 		} else if strings.HasPrefix(command, "unsub ") {
 			url := command[6:]
 			// Unsubscribe from repo
-			log.Printf("unsubscribeing from a channel at %s", url)
-			s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Unsubscribing from %s", url))
+			log.Printf("unsubscribing from a channel at %s", url)
+			_, _ = s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Unsubscribing from %s", url))
 		}
 	}
 }
