@@ -57,7 +57,7 @@ func routes() *chi.Mux {
 	return router
 }
 
-//This should not be a global var, change it soon
+// This should not be a global var, change it soon
 var webhooks []WebhookData
 
 func developer(w http.ResponseWriter, r *http.Request) {
