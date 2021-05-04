@@ -1,10 +1,7 @@
 package discord
 
 import (
-	"io/ioutil"
 	"log"
-	"os"
-	"strings"
 	"sync"
 
 	"developer-bot/discord/handlers"
@@ -35,7 +32,6 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 	messages = incomming
 
 	// Get the bot token and open a discord session with it
-	// token := getToken()
 	token, err := firestore.GetBotToken()
 	if err != nil {
 		return
@@ -74,27 +70,4 @@ func RunBot(incomming chan Message, wg *sync.WaitGroup) {
 			break
 		}
 	}
-}
-
-// getToken from either TOKEN or TOKEN_FILE environment variables.
-// There are two options for passing the secret token to the program:
-// 1. TOKEN contains the secret token directly and should not be used in production, but it's fine for development.
-// 2. TOKEN_FILE contains the full path to a file that contains the secret.
-// TOKEN_FILE is preferred since it can be more secure.
-func getToken() (token string) {
-	if value, set := os.LookupEnv("TOKEN"); set { // Is the TOKEN envvar set
-		log.Println("Found TOKEN")
-		token = value
-	} else if file, set := os.LookupEnv("TOKEN_FILE"); set { // Is the TOKEN_FILE envvar set
-		log.Println("Found TOKEN_FILE")
-		data, err := ioutil.ReadFile(file)
-		if err != nil {
-			log.Fatal("Failed to read token file")
-		}
-		token = strings.TrimSpace(string(data))
-	} else {
-		log.Fatal("No token found. Set TOKEN or TOKEN_FILE")
-	}
-
-	return token
 }
