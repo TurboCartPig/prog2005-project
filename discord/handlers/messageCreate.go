@@ -6,6 +6,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"developer-bot/endpoints/firestore"
+	"developer-bot/endpoints/types"
 )
 
 const HelpMessage = "Help!!!!"
@@ -42,6 +43,12 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			}
 		} else if strings.HasPrefix(command, "sub") {
 			// Subscribe to gitlab repo notifications
+			url := command[2:]
+			chReg := types.ChannelRegistration{
+				ChannelID:  msg.ChannelID,
+				RepoWebURL: url,
+			}
+			firestore.SaveChannelRegistration(&chReg)
 		} else if strings.HasPrefix(command, "unsub") {
 			// Unsubscribe from repo
 		}
