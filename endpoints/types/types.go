@@ -16,6 +16,7 @@ type WebhookData struct {
 		DueDate     string   `json:"due_date"`
 		ProjectID   int      `json:"project_id"`
 		Labels      []Labels `json:"labels"`
+		Url         string   `json:"url"`
 	} `json:"object_attributes"`
 	Labels     []Labels `json:"labels"`
 	Repository struct {
@@ -51,5 +52,6 @@ type Deadline struct {
 	RepoWebURL  string `json:"repo_web_url"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	IssueWebURL string `json:"issue_web_url"`
 	DueDate     string `json:"due_date"`
 }

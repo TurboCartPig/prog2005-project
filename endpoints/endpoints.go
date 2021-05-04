@@ -5,6 +5,7 @@ import (
 	"developer-bot/endpoints/firestore"
 	"encoding/json"
 	"fmt"
+	"github.com/bwmarrin/discordgo"
 	"log"
 	"net/http"
 	"os"
@@ -27,7 +28,6 @@ func getPort() string {
 
 	return port
 }
-
 
 // Serve the REST API over HTTP
 func Serve() {
@@ -64,7 +64,6 @@ func routes() *chi.Mux {
 	return router
 }
 
-
 func developer(w http.ResponseWriter, r *http.Request) {
 	var newWebhook types.WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
@@ -74,13 +73,9 @@ func developer(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, "Working")
 
-
-    processWebhook(&newWebhook)
-	discord.SendMessage("833465870872608788", "Hei")
-
+	processWebhook(&newWebhook)
 	w.WriteHeader(http.StatusOK)
 }
-
 
 func processWebhook(webhook *types.WebhookData) {
 	if isDeadline(webhook) {
@@ -89,9 +84,26 @@ func processWebhook(webhook *types.WebhookData) {
 			Title:       webhook.ObjectAttributes.Title,
 			Description: webhook.ObjectAttributes.Description,
 			DueDate:     webhook.ObjectAttributes.DueDate,
+			IssueWebURL: webhook.ObjectAttributes.Url,
 		}
 		firestore.SaveDeadlineToFirestore(&deadline)
-		// TODO: Print this deadline to discord
+		discordMessage := discordgo.MessageSend{
+			Content: "New deadline posted:",
+			Embed: &discordgo.MessageEmbed{
+				URL:         deadline.IssueWebURL,
+				Title:       deadline.Title,
+				Description: deadline.Description,
+				Color:       15158332,
+				Fields: []*discordgo.MessageEmbedField {
+					{
+						Name:   "DUE DATE",
+						Value:  deadline.DueDate,
+						Inline: false,
+					},
+				},
+			},
+		}
+		discord.SendComplexMessage("833465870872608788", &discordMessage)
 	}
 }
 

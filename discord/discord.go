@@ -17,12 +17,24 @@ type MessageSend struct {
 	Content   string
 }
 
+type MessageSendComplex struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+}
+
 type Shutdown struct{}
 
 var messages = make(chan Message)
 
-func SendMessage(channelid, content string) {
-	messages <- MessageSend{ChannelID: channelid, Content: content}
+func SendMessage(channelID, content string) {
+	messages <- MessageSend{ChannelID: channelID, Content: content}
+}
+
+func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
+	messages <- MessageSendComplex{
+		ChannelID: channelID,
+		Message:   message,
+	}
 }
 
 func SendShutdown() {
@@ -66,6 +78,11 @@ func RunBot(wg *sync.WaitGroup) {
 		switch t := input.(type) {
 		case MessageSend:
 			_, err := session.ChannelMessageSend(t.ChannelID, t.Content)
+			if err != nil {
+				log.Println("Failed to send message: ", err)
+			}
+		case MessageSendComplex:
+			_, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
