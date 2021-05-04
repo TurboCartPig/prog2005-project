@@ -6,7 +6,7 @@ stages:
 # Define the build stage
 build:
   stage: build
-  image: golang:1.16-alpine3.13
+  image: golang:1.16
   script:
     - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
   artifacts:
