@@ -8,7 +8,6 @@ type WebhookData struct {
 		Name          string `json:"name"`
 		Description   string `json:"description"`
 		WebURL        string `json:"web_url"`
-		DefaultBranch string `json:"default_branch"`
 	} `json:"project"`
 	ObjectAttributes struct {
 		Title       string   `json:"title"`
