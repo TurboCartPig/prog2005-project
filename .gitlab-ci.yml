@@ -41,4 +41,4 @@ build-docker:
   script:
     - docker info
     - docker build -t "$CI_DOCKERHUB_USER/developer-bot:latest" .
-    - docker push "CI_DOCKERHUB_USER/developer-bot:latest"
+    - docker push "$CI_DOCKERHUB_USER/developer-bot:latest"
