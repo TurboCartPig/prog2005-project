@@ -2,8 +2,8 @@
 stages:
   - build
   - lint
+  - build-docker
 
-# TODO: - build-docker
 # TODO: - deploy-docker
 
 # Define the build stage
@@ -31,3 +31,11 @@ lint:
   script:
     # Run linting
     - golangci-lint run -v --timeout "10m"
+
+# Define a stage that builds the docker image
+build-docker:
+  stage: build-docker
+  image: docker:20.10.6 # Use the same version as the underlying executor
+  script:
+    - docker info
+    - docker build -t developer-bot .
