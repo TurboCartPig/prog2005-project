@@ -68,4 +68,4 @@ deploy-to-gcp:
     - gcloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
   script:
     # Restart the VM. It will now automatically pull the new image
-    - gcloud compute instances reset $CI_GCLOUD_VM
+    - gcloud compute instances reset $CI_GCLOUD_VM --zone europe-west1-b
