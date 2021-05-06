@@ -58,9 +58,16 @@ func RunBot(wg *sync.WaitGroup) {
 		return
 	}
 
-	// Add event handler
+	// Add handler to notify when the bot is ready
 	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) { log.Println("Bot is up and running") })
+	// Add handler for new messages being posted
 	session.AddHandler(handlers.MessageCreate)
+	// Add handler for individual slash commands
+	session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		if handler, ok := CommandHandlers[i.Data.Name]; ok {
+			handler(s, i)
+		}
+	})
 
 	// Specify minimal gateway intents
 	// See https://discord.com/developers/docs/topics/gateway#gateway-intents
@@ -73,6 +80,15 @@ func RunBot(wg *sync.WaitGroup) {
 		return
 	}
 	defer session.Close()
+
+	// Register slash commands
+	for _, command := range Commands {
+		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
+		if err != nil {
+			log.Printf("Failed to create command: %v, error %v", command.Name, err)
+			return
+		}
+	}
 
 	for {
 		input := <-messages
