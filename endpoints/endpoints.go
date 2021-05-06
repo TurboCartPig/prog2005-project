@@ -100,7 +100,7 @@ func processWebhook(webhook *types.WebhookData) {
 			opt = append(opt, types.Option{
 				Title:       content[0],
 				Description: content[1],
-				EmojiCode: types.VotingEmojis[i],
+				EmojiCode:   types.VotingEmojis[i],
 			})
 		}
 		vote := types.Vote{
@@ -148,18 +148,18 @@ func sendVoteToDiscord(vote *types.Vote) {
 	discordMessage := discordgo.MessageSend{
 		Content: "New vote",
 		Embed: &discordgo.MessageEmbed{
-			Color: 10181046,
+			Color:  10181046,
 			Title:  vote.Title,
 			Fields: fields,
 		},
 	}
 	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
 	for _, elem := range channelID {
-		discord.SendComplexMessageWithFollowUp(elem,&discordMessage,vote,handleVote)
+		discord.SendComplexMessageWithFollowUp(elem, &discordMessage, vote, handleVote)
 	}
 }
 
-func handleVote(messageID , channelID string, object interface{}) {
+func handleVote(messageID, channelID string, object interface{}) {
 	session := discord.GetDiscordSession()
 
 	if t, ok := object.(*types.Vote); ok {
