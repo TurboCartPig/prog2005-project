@@ -92,7 +92,11 @@ func GetRepoURLByChannelID(channelID string) (string, error) {
 	}
 
 	var cr types.ChannelRegistration
-	docsnap.DataTo(&cr)
+	err = docsnap.DataTo(&cr)
+	if err != nil {
+		log.Println("Failed to parse the docuent into ChannelRegistration")
+		return "", err
+	}
 
 	return cr.RepoWebURL, nil
 }
@@ -109,10 +113,15 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 			break
 		} else if err != nil {
 			log.Println("Failed to get document from firestore: ", err)
+			continue
 		}
 
 		var deadline types.Deadline
 		err = doc.DataTo(&deadline)
+		if err != nil {
+			log.Println("Failed to parse document into Deadline", err)
+			continue
+		}
 
 		deadlines = append(deadlines, deadline)
 	}

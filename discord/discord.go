@@ -46,7 +46,12 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, object interface{}, followUp func(string, string, interface{})) { //nolint:lll
+func SendComplexMessageWithFollowUp(
+	channelID string,
+	message *discordgo.MessageSend,
+	object interface{},
+	followUp func(string, string, interface{}),
+) {
 	messages <- MessageSendComplexWithFollowUp{
 		ChannelID: channelID,
 		Message:   message,

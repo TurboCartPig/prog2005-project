@@ -148,7 +148,7 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 }
 
-// Respond with all deadlines for the repos registerd for this channel
+// Respond with all deadlines for the repos registered for this channel
 func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	repoURL, err := firestore.GetRepoURLByChannelID(i.ChannelID)
 	if err != nil {
