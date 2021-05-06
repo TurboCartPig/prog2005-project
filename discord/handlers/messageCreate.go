@@ -10,5 +10,4 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 	if msg.Author.ID == s.State.User.ID {
 		return
 	}
-
 }

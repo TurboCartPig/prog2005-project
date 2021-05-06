@@ -51,7 +51,7 @@ var (
 
 // Repspond with a help message
 func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
 			Embeds: []*discordgo.MessageEmbed{{
@@ -100,12 +100,15 @@ func commandHandlerSub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	firestore.SaveChannelRegistration(&chReg)
 
 	log.Printf("subscribing from a channel at %s", url)
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
 			Content: fmt.Sprintf("Subscribing to %s", url),
 		},
 	})
+	if err != nil {
+		log.Println("Failed to send subscription confimation")
+	}
 }
 
 // Unsubscribe from repo
@@ -115,7 +118,7 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err := firestore.DeleteChannelRegistations(i.ChannelID)
 	if err != nil {
 		log.Printf("failed while unsubscribing from a channel at %s. %s", url, err)
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionApplicationCommandResponseData{
 				Content: fmt.Sprintf("Failed while unsubscribing from %s, try again later...", url),
@@ -124,10 +127,13 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	log.Printf("unsubscribing from a channel at %s", url)
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
 			Content: fmt.Sprintf("Subscribing to %s", url),
 		},
 	})
+	if err != nil {
+		log.Println("Failed to send subscription confimation")
+	}
 }
