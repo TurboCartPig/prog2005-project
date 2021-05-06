@@ -2,7 +2,8 @@
 stages:
   - build
   - lint
-  - deploy
+  - deploy-to-dockerhub
+  - deploy-to-gcp
 
 # Define a persistent cache for Go
 .go-cache:
@@ -40,8 +41,8 @@ lint:
 
 # Define a stage that builds the docker image, and deploys it to dockerhub
 # TODO: Try to cache some layers here
-deploy:
-  stage: deploy
+deploy-to-dockerhub:
+  stage: deploy-to-dockerhub
   image: docker:20.10.6 # Use the same version as the underlying executor
   only:
     - master
@@ -54,3 +55,19 @@ deploy:
     - docker build -t "$CI_DOCKERHUB_USER/developer-bot:latest" .
     # Push built image to dockerhub
     - docker push "$CI_DOCKERHUB_USER/developer-bot:latest"
+
+# Define a stage that deploys the previously built image to our GCP VM
+deploy-to-gcp:
+  stage: deploy-to-gcp
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+  needs: ["deploy-to-dockerhub"]
+  only:
+    - master
+  before_script:
+    # Authenticate with GCP
+    - gloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
+  script:
+    # Restart the VM. It will now automatically pull the new image
+    - gcloud compute instance reset $CI_GCLOUD_VM
+  after_script:
+    - rm /tmp/$CI_PIPELINE_ID.json
