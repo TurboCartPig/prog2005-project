@@ -22,6 +22,12 @@ type MessageSendComplex struct {
 	Message   *discordgo.MessageSend
 }
 
+type MessageSendComplexWithFollowUp struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+	FollowUp  func(messageID string)
+}
+
 type Shutdown struct{}
 
 var messages = make(chan Message)
@@ -34,6 +40,14 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	messages <- MessageSendComplex{
 		ChannelID: channelID,
 		Message:   message,
+	}
+}
+
+func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, followUp func(messageID string)) {
+	messages <- MessageSendComplexWithFollowUp{
+		ChannelID: channelID,
+		Message:   message,
+		FollowUp:  followUp,
 	}
 }
 
@@ -103,6 +117,12 @@ func RunBot(wg *sync.WaitGroup) {
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
+		case MessageSendComplexWithFollowUp:
+			message, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
+			if err != nil {
+				log.Println("Failed to send message: ", err)
+			}
+			t.FollowUp(message.ID)
 		case Shutdown:
 			return
 		}
