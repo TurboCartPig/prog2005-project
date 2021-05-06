@@ -147,6 +147,7 @@ func sendVoteToDiscord(vote *types.Vote) {
 	discordMessage := discordgo.MessageSend{
 		Content: "New vote",
 		Embed: &discordgo.MessageEmbed{
+			Color: 10181046,
 			Title:  vote.Title,
 			Fields: fields,
 		},
