@@ -95,11 +95,12 @@ func processWebhook(webhook *types.WebhookData) {
 	if isLabel(webhook, "vote") {
 		options := strings.Split(webhook.ObjectAttributes.Description, "+==")
 		var opt []types.Option
-		for _, elem := range options {
+		for i, elem := range options {
 			content := strings.Split(elem, "+--")
 			opt = append(opt, types.Option{
 				Title:       content[0],
 				Description: content[1],
+				EmojiCode: types.VotingEmojis[i],
 			})
 		}
 		vote := types.Vote{
@@ -154,7 +155,24 @@ func sendVoteToDiscord(vote *types.Vote) {
 	}
 	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
 	for _, elem := range channelID {
-		discord.SendComplexMessage(elem, &discordMessage)
+		//discord.SendComplexMessage(elem,&discordMessage)
+		discord.SendComplexMessageWithFollowUp(elem,&discordMessage,handleVote)
+	}
+}
+
+func handleVote(messageID , channelID string) {
+	session := discord.GetDiscordSession()
+	err := session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[0])
+	if err != nil {
+		fmt.Println(err)
+	}
+	err =session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[1])
+	if err != nil {
+		fmt.Println(err)
+	}
+	err =session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[2])
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 

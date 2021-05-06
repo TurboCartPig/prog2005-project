@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -9,6 +10,8 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 )
+
+var session *discordgo.Session
 
 type Message interface{}
 
@@ -25,7 +28,7 @@ type MessageSendComplex struct {
 type MessageSendComplexWithFollowUp struct {
 	ChannelID string
 	Message   *discordgo.MessageSend
-	FollowUp  func(messageID string)
+	FollowUp  func(messageID, channelID string)
 }
 
 type Shutdown struct{}
@@ -43,7 +46,7 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, followUp func(messageID string)) {
+func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend,followUp func(string, string)) {
 	messages <- MessageSendComplexWithFollowUp{
 		ChannelID: channelID,
 		Message:   message,
@@ -53,6 +56,10 @@ func SendComplexMessageWithFollowUp(channelID string, message *discordgo.Message
 
 func SendShutdown() {
 	messages <- Shutdown{}
+}
+
+func GetDiscordSession() *discordgo.Session {
+	return session
 }
 
 // RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
@@ -66,7 +73,7 @@ func RunBot(wg *sync.WaitGroup) {
 		return
 	}
 
-	session, err := discordgo.New("Bot " + token)
+	session, err = discordgo.New("Bot " + token)
 	if err != nil {
 		log.Println("Failed to create a discord session\n", err)
 		return
@@ -119,10 +126,11 @@ func RunBot(wg *sync.WaitGroup) {
 			}
 		case MessageSendComplexWithFollowUp:
 			message, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
+			fmt.Printf("Sent message in channel %s\n", t.ChannelID)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-			t.FollowUp(message.ID)
+			t.FollowUp(message.ID, t.ChannelID)
 		case Shutdown:
 			return
 		}

@@ -66,4 +66,17 @@ type Vote struct {
 type Option struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	EmojiCode   string `json:"emoji"`
+}
+
+var VotingEmojis = []string {
+	"1️⃣",
+	"2️⃣",
+	"3️⃣",
+	"4️⃣",
+	"5️⃣",
+	"6️⃣",
+	"7️⃣",
+	"8️⃣",
+	"9️⃣",
 }
