@@ -136,6 +136,7 @@ func RunBot(wg *sync.WaitGroup) {
 // Register slash commands.
 // NOTE: Apparently we only need to do this every time we change the slash commands,
 //       not everytime we start the bot
+// nolint:deadcode,unused // Will be used in future code
 func registerSlashCommands(session *discordgo.Session) {
 	for _, command := range Commands {
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
