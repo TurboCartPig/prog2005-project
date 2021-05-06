@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"fmt"
 	"log"
 	"sync"
 
@@ -28,7 +27,8 @@ type MessageSendComplex struct {
 type MessageSendComplexWithFollowUp struct {
 	ChannelID string
 	Message   *discordgo.MessageSend
-	FollowUp  func(messageID, channelID string)
+	FollowUp  func(messageID, channelID string, object interface{})
+	Object    interface{}
 }
 
 type Shutdown struct{}
@@ -46,11 +46,12 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend,followUp func(string, string)) {
+func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, object interface{}, followUp func(string, string, interface{})) { //nolint:lll
 	messages <- MessageSendComplexWithFollowUp{
 		ChannelID: channelID,
 		Message:   message,
 		FollowUp:  followUp,
+		Object:    object,
 	}
 }
 
@@ -126,11 +127,10 @@ func RunBot(wg *sync.WaitGroup) {
 			}
 		case MessageSendComplexWithFollowUp:
 			message, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
-			fmt.Printf("Sent message in channel %s\n", t.ChannelID)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-			t.FollowUp(message.ID, t.ChannelID)
+			t.FollowUp(message.ID, t.ChannelID, t.Object)
 		case Shutdown:
 			return
 		}

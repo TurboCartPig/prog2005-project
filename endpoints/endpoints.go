@@ -155,24 +155,20 @@ func sendVoteToDiscord(vote *types.Vote) {
 	}
 	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
 	for _, elem := range channelID {
-		//discord.SendComplexMessage(elem,&discordMessage)
-		discord.SendComplexMessageWithFollowUp(elem,&discordMessage,handleVote)
+		discord.SendComplexMessageWithFollowUp(elem,&discordMessage,vote,handleVote)
 	}
 }
 
-func handleVote(messageID , channelID string) {
+func handleVote(messageID , channelID string, object interface{}) {
 	session := discord.GetDiscordSession()
-	err := session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[0])
-	if err != nil {
-		fmt.Println(err)
-	}
-	err =session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[1])
-	if err != nil {
-		fmt.Println(err)
-	}
-	err =session.MessageReactionAdd(channelID,messageID,types.VotingEmojis[2])
-	if err != nil {
-		fmt.Println(err)
+
+	if t, ok := object.(*types.Vote); ok {
+		for _, elem := range t.Options {
+			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
 	}
 }
 
