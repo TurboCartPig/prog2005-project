@@ -42,7 +42,7 @@ var (
 		},
 		{
 			Name:        "deadlines",
-			Description: "Get all deadlines from subsribed GitLab repo",
+			Description: "Get all deadlines from subscribed GitLab repo",
 		},
 	}
 	// CommandHandlers defines what functions to call when slash commands are used
@@ -159,11 +159,11 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 	// Get deadlines from firestore
 	deadlines := firestore.GetDeadlinesByRepoURL(repoURL)
 
-	fields := make([]*discordgo.MessageEmbedField, len(deadlines))
-	for _, elem := range deadlines[1:] {
+	var fields []*discordgo.MessageEmbedField
+	for _, elem := range deadlines {
 		fields = append(fields, &discordgo.MessageEmbedField{
 			Name:   elem.Title,
-			Value:  elem.Description,
+			Value:  elem.Description + "\n\nDue: " + elem.DueDate,
 			Inline: false,
 		})
 	}
@@ -176,7 +176,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 				Title:       "Deadlines",
 				Description: "Hei",
 				Color:       10181046,
-				// Fields:      fields, // FIXME: This fuckes everything
+				Fields:      fields,
 			}},
 		},
 	})

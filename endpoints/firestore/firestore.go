@@ -106,7 +106,7 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 	ctx := context.Background()
 	iter := client.Collection(DeadlinesCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
 
-	deadlines := make([]types.Deadline, 1)
+	var deadlines []types.Deadline
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
