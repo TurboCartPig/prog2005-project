@@ -103,14 +103,16 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 	defer session.Close()
 
+	// NOTE: Apparently we only need to do this every time we change the slash commands,
+	//       not everytime we start the bot
 	// Register slash commands
-	for _, command := range Commands {
-		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
-		if err != nil {
-			log.Printf("Failed to create command: %v, error %v", command.Name, err)
-			return
-		}
-	}
+	// for _, command := range Commands {
+	// 	_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
+	// 	if err != nil {
+	// 		log.Printf("Failed to create command: %v, error %v", command.Name, err)
+	// 		return
+	// 	}
+	// }
 
 	for {
 		input := <-messages
