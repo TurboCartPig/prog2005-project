@@ -4,7 +4,6 @@ import (
 	"developer-bot/discord"
 	"developer-bot/firestore"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,7 +21,7 @@ import (
 // Version of the API
 const Version = "v1"
 
-// getPort from environment variable
+// getPort from environment variable.
 func getPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -32,7 +31,7 @@ func getPort() string {
 	return port
 }
 
-// Serve the REST API over HTTP
+// Serve the REST API over HTTP.
 func Serve() {
 	port := getPort()
 	router := routes()
@@ -45,13 +44,13 @@ func Serve() {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
 
-	// Create a new firestore client in the firestore package.
+	// Create a new firestore client in the firestore package
 	firestore.NewFirestoreClient()
 
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
 
-// routes sets up routes
+// routes sets up routes.
 func routes() *chi.Mux {
 	router := chi.NewRouter()
 
@@ -67,6 +66,7 @@ func routes() *chi.Mux {
 	return router
 }
 
+// developer handles POST requests from GitLab.
 func developer(w http.ResponseWriter, r *http.Request) {
 	var newWebhook types.WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
@@ -74,10 +74,10 @@ func developer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	fmt.Fprint(w, "Working")
-
 	processWebhook(&newWebhook)
-	w.WriteHeader(http.StatusOK)
+
+	// Respond that we have accepted the request and we are processing it further
+	w.WriteHeader(http.StatusAccepted)
 }
 
 func processWebhook(webhook *types.WebhookData) {
