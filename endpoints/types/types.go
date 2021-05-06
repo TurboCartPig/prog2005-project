@@ -55,3 +55,15 @@ type Deadline struct {
 	IssueWebURL string `json:"issue_web_url"`
 	DueDate     string `json:"due_date"`
 }
+
+type Vote struct {
+	RepoWebURL  string   `json:"repo_web_url"`
+	Title       string   `json:"title"`
+	Options     []Option `json:"options"`
+	IssueWebURL string   `json:"issue_web_url"`
+}
+
+type Option struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}

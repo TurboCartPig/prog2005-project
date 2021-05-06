@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -80,7 +81,7 @@ func developer(w http.ResponseWriter, r *http.Request) {
 }
 
 func processWebhook(webhook *types.WebhookData) {
-	if isDeadline(webhook) {
+	if isLabel(webhook, "deadline") {
 		deadline := types.Deadline{
 			RepoWebURL:  webhook.Project.WebURL,
 			Title:       webhook.ObjectAttributes.Title,
@@ -89,11 +90,29 @@ func processWebhook(webhook *types.WebhookData) {
 			IssueWebURL: webhook.ObjectAttributes.URL,
 		}
 		firestore.SaveDeadlineToFirestore(&deadline)
-		sendMessageToDiscord(&deadline)
+		sendDeadlineToDiscord(&deadline)
+	}
+	if isLabel(webhook, "vote") {
+		options := strings.Split(webhook.ObjectAttributes.Description, "+==")
+		var opt []types.Option
+		for _, elem := range options {
+			content := strings.Split(elem, "+--")
+			opt = append(opt, types.Option{
+				Title:       content[0],
+				Description: content[1],
+			})
+		}
+		vote := types.Vote{
+			RepoWebURL:  webhook.Project.WebURL,
+			Title:       webhook.ObjectAttributes.Title,
+			Options:     opt,
+			IssueWebURL: webhook.ObjectAttributes.URL,
+		}
+		sendVoteToDiscord(&vote)
 	}
 }
 
-func sendMessageToDiscord(deadline *types.Deadline) {
+func sendDeadlineToDiscord(deadline *types.Deadline) {
 	discordMessage := discordgo.MessageSend{
 		Content: "New deadline posted:",
 		Embed: &discordgo.MessageEmbed{
@@ -116,9 +135,31 @@ func sendMessageToDiscord(deadline *types.Deadline) {
 	}
 }
 
-func isDeadline(webhook *types.WebhookData) bool {
+func sendVoteToDiscord(vote *types.Vote) {
+	var fields []*discordgo.MessageEmbedField
+	for _, elem := range vote.Options {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   elem.Title,
+			Value:  elem.Description,
+			Inline: false,
+		})
+	}
+	discordMessage := discordgo.MessageSend{
+		Content: "New vote",
+		Embed: &discordgo.MessageEmbed{
+			Title:  vote.Title,
+			Fields: fields,
+		},
+	}
+	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
+	for _, elem := range channelID {
+		discord.SendComplexMessage(elem, &discordMessage)
+	}
+}
+
+func isLabel(webhook *types.WebhookData, labelIdentifier string) bool {
 	for _, label := range webhook.Labels {
-		if label.Title == "deadline" {
+		if label.Title == labelIdentifier {
 			return true
 		}
 	}
