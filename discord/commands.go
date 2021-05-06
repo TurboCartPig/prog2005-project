@@ -54,7 +54,7 @@ var (
 	}
 )
 
-// Repspond with a help message
+// Respond with a help message
 func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -125,7 +125,7 @@ func commandHandlerSub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	url := i.Data.Options[0].StringValue()
 
-	err := firestore.DeleteChannelRegistations(i.ChannelID)
+	err := firestore.DeleteChannelRegistrations(i.ChannelID)
 	if err != nil {
 		log.Printf("failed while unsubscribing from a channel at %s. %s", url, err)
 		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{

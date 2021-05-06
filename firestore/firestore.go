@@ -82,7 +82,6 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 	return channelIDs
 }
 
-<<<<<<< HEAD:endpoints/firestore/firestore.go
 func GetRepoURLByChannelID(channelID string) (string, error) {
 	ctx := context.Background()
 	docref := client.Collection(ChannelRegistrationsCollection).Doc(channelID)
@@ -130,10 +129,8 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 	return deadlines
 }
 
-func DeleteChannelRegistations(channelID string) error {
-=======
+
 func DeleteChannelRegistrations(channelID string) error {
->>>>>>> fbba1cc (Major refactoring of some code):firestore/firestore.go
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)
 	return err

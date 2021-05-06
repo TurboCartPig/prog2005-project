@@ -26,18 +26,13 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-<<<<<<< HEAD
 func SendComplexMessageWithFollowUp(
 	channelID string,
 	message *discordgo.MessageSend,
 	object interface{},
 	followUp func(string, string, interface{}),
 ) {
-	messages <- MessageSendComplexWithFollowUp{
-=======
-func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, object interface{}, followUp func(string, string, interface{})) { //nolint:lll
 	messages <- types.MessageSendComplexWithFollowUp{
->>>>>>> fbba1cc (Major refactoring of some code)
 		ChannelID: channelID,
 		Message:   message,
 		FollowUp:  followUp,
@@ -126,12 +121,11 @@ func registerSlashCommands(session *discordgo.Session) {
 	for _, command := range Commands {
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
 		if err != nil {
-		log.Printf("Failed to create command: %v, error %v", command.Name, err)
-		return
+			log.Printf("Failed to create command: %v, error %v", command.Name, err)
+			return
 		}
 	}
 }
-
 
 func HandleVote(messageID, channelID string, object interface{}) {
 	session := GetDiscordSession()
