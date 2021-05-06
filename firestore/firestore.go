@@ -3,7 +3,6 @@ package firestore
 import (
 	"context"
 	"developer-bot/types"
-	"fmt"
 	"log"
 
 	"google.golang.org/api/iterator"
@@ -48,7 +47,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	_, _, err := client.Collection(DeadlinesCollection).Add(ctx, *deadline)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -57,7 +56,7 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -74,7 +73,7 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 			break
 		}
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			break
 		}
 		err = doc.DataTo(&cr)
