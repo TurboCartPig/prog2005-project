@@ -159,7 +159,6 @@ func sendVoteToDiscord(vote *types.Vote) {
 	}
 }
 
-
 func isLabel(webhook *types.WebhookData, labelIdentifier string) bool {
 	for _, label := range webhook.Labels {
 		if label.Title == labelIdentifier {

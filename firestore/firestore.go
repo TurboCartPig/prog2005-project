@@ -129,7 +129,6 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 	return deadlines
 }
 
-
 func DeleteChannelRegistrations(channelID string) error {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)

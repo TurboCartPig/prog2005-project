@@ -44,7 +44,6 @@ func SendShutdown() {
 	messages <- types.Shutdown{}
 }
 
-
 // RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
 func RunBot(wg *sync.WaitGroup) {
 	defer log.Println("Discord bot shut down")
