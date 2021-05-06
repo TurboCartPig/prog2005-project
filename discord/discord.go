@@ -44,9 +44,6 @@ func SendShutdown() {
 	messages <- types.Shutdown{}
 }
 
-func GetDiscordSession() *discordgo.Session {
-	return session
-}
 
 // RunBot runs the discord bot until a signal or interrupt from the os signal that it should quit.
 func RunBot(wg *sync.WaitGroup) {
@@ -128,8 +125,6 @@ func registerSlashCommands(session *discordgo.Session) {
 }
 
 func HandleVote(messageID, channelID string, object interface{}) {
-	session := GetDiscordSession()
-
 	if t, ok := object.(*types.Vote); ok {
 		for _, elem := range t.Options {
 			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
