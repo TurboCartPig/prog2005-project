@@ -72,8 +72,15 @@ func MessageCreate(s *discordgo.Session, msg *discordgo.MessageCreate) {
 			log.Printf("subscribing from a channel at %s", url)
 			_, _ = s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Subscribing to %s", url))
 		} else if strings.HasPrefix(command, "unsub ") {
-			url := command[6:]
 			// Unsubscribe from repo
+			url := command[6:]
+
+			err := firestore.DeleteChannelRegistations(msg.ChannelID)
+			if err != nil {
+				log.Printf("failed while unsubscribing from a channel at %s. %s", url, err)
+				_, _ = s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Failed while unsubscribing from %s, try again later...", url))
+			}
+
 			log.Printf("unsubscribing from a channel at %s", url)
 			_, _ = s.ChannelMessageSend(msg.ChannelID, fmt.Sprintf("Unsubscribing from %s", url))
 		}

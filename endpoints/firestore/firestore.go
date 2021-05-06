@@ -16,6 +16,11 @@ import (
 
 var client *firestore.Client
 
+const (
+	ChannelRegistrationsCollection = "channel-registrations"
+	DeadlinesCollection            = "deadlines"
+)
+
 // NewFirestoreClient creates and initializes a new firestore client.
 func NewFirestoreClient() {
 	// Use GOOGLE_APPLICATION_CREDENTIALS env var to find the service account key
@@ -38,7 +43,7 @@ func ShutdownClient() {
 
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
-	_, _, err := client.Collection("deadlines").Add(ctx, *deadline)
+	_, _, err := client.Collection(DeadlinesCollection).Add(ctx, *deadline)
 
 	if err != nil {
 		fmt.Println(err)
@@ -47,7 +52,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
-	_, err := client.Collection("channel-registrations").Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
+	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -55,7 +60,7 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 
 func GetChannelIDByRepoURL(repoURL string) []string {
 	ctx := context.Background()
-	iter := client.Collection("channel-registrations").Where("RepoWebURL", "==", repoURL).Documents(ctx)
+	iter := client.Collection(ChannelRegistrationsCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
 
 	var channelIDs []string
 	var cr types.ChannelRegistration
@@ -76,6 +81,12 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 		channelIDs = append(channelIDs,cr.ChannelID)
 	}
 	return channelIDs
+}
+
+func DeleteChannelRegistations(channelID string) error {
+	ctx := context.Background()
+	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)
+	return err
 }
 
 // GetBotToken gets the discord bot token from google cloud's secret manager.
