@@ -101,14 +101,17 @@ func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 // Subscribe to gitlab repo notifications
 func commandHandlerSub(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Extract the url from the discord interaction
 	url := i.Data.Options[0].StringValue()
 
+	// Build a registration and save it to firestore
 	chReg := types.ChannelRegistration{
 		ChannelID:  i.ChannelID,
 		RepoWebURL: url,
 	}
 	firestore.SaveChannelRegistration(&chReg)
 
+	// Respond to the command with a confimation
 	log.Printf("subscribing from a channel at %s", url)
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -123,8 +126,10 @@ func commandHandlerSub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 // Unsubscribe from repo
 func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Extract the url from the discord interaction
 	url := i.Data.Options[0].StringValue()
 
+	// Delete the registration from firestore
 	err := firestore.DeleteChannelRegistrations(i.ChannelID)
 	if err != nil {
 		log.Printf("failed while unsubscribing from a channel at %s. %s", url, err)
@@ -134,8 +139,10 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 				Content: fmt.Sprintf("Failed while unsubscribing from %s, try again later...", url),
 			},
 		})
+		return
 	}
 
+	// Respond to the command with a confimation
 	log.Printf("unsubscribing from a channel at %s", url)
 	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -150,6 +157,7 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 // Respond with all deadlines for the repos registered for this channel
 func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Get the repo associated with this channel
 	repoURL, err := firestore.GetRepoURLByChannelID(i.ChannelID)
 	if err != nil {
 		log.Println("Failed to get repoURL")
@@ -159,6 +167,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 	// Get deadlines from firestore
 	deadlines := firestore.GetDeadlinesByRepoURL(repoURL)
 
+	// Build all the feilds for an embed
 	var fields []*discordgo.MessageEmbedField
 	for _, elem := range deadlines {
 		fields = append(fields, &discordgo.MessageEmbedField{
@@ -168,6 +177,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 		})
 	}
 
+	// Respond to the command with all the deadlines
 	log.Println("Posting deadlines")
 	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,

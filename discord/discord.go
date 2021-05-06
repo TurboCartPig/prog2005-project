@@ -28,7 +28,7 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-// SendComplexMessageWithFollowUp sends message in specified discord channel, with a followup function that gets called <TODO>.
+// SendComplexMessageWithFollowUp sends message in specified discord channel, with a followup function that gets called after the message is sent, with the ID of the message.
 func SendComplexMessageWithFollowUp(
 	channelID string,
 	message *discordgo.MessageSend,
@@ -87,9 +87,9 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 	defer session.Close()
 
-	// Respond to incomming messages from the rest of the program,
+	// Respond to incoming messages from the rest of the program,
 	// and perform actions in the context of a discord session.
-	// This takes care of all syncronization issues and provides a uniform API
+	// This takes care of all synchronization issues and provides a uniform API
 	// for the rest of the program.
 	for {
 		input := <-messages
@@ -118,7 +118,7 @@ func RunBot(wg *sync.WaitGroup) {
 
 // Register slash commands.
 // NOTE: Apparently we only need to do this every time we change the slash commands,
-//       not everytime we start the bot
+//       not every time we start the bot
 // nolint:deadcode,unused // Will be used in future code
 func registerSlashCommands(session *discordgo.Session) {
 	for _, command := range Commands {
