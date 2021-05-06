@@ -82,6 +82,53 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 	return channelIDs
 }
 
+func GetRepoURLByChannelID(channelID string) (string, error) {
+	ctx := context.Background()
+	docref := client.Collection(ChannelRegistrationsCollection).Doc(channelID)
+	docsnap, err := docref.Get(ctx)
+	if err != nil {
+		log.Println("Faild to get document from firebase:", err)
+		return "", err
+	}
+
+	var cr types.ChannelRegistration
+	err = docsnap.DataTo(&cr)
+	if err != nil {
+		log.Println("Failed to parse the docuent into ChannelRegistration")
+		return "", err
+	}
+
+	return cr.RepoWebURL, nil
+}
+
+// Get all the deadlines for a given repo.
+func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
+	ctx := context.Background()
+	iter := client.Collection(DeadlinesCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
+
+	var deadlines []types.Deadline
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		} else if err != nil {
+			log.Println("Failed to get document from firestore: ", err)
+			continue
+		}
+
+		var deadline types.Deadline
+		err = doc.DataTo(&deadline)
+		if err != nil {
+			log.Println("Failed to parse document into Deadline", err)
+			continue
+		}
+
+		deadlines = append(deadlines, deadline)
+	}
+
+	return deadlines
+}
+
 func DeleteChannelRegistations(channelID string) error {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)

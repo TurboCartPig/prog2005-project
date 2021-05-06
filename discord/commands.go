@@ -40,12 +40,17 @@ var (
 				},
 			},
 		},
+		{
+			Name:        "deadlines",
+			Description: "Get all deadlines from subscribed GitLab repo",
+		},
 	}
 	// CommandHandlers defines what functions to call when slash commands are used
 	CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"help":  commandHandlerHelp,
-		"sub":   commandHandlerSub,
-		"unsub": commandHandlerUnsub,
+		"help":      commandHandlerHelp,
+		"sub":       commandHandlerSub,
+		"unsub":     commandHandlerUnsub,
+		"deadlines": commandHandlerDeadlines,
 	}
 )
 
@@ -81,6 +86,11 @@ func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
 						Value: "Unsubscribe from a GitLab project." +
 							"\n\n" +
 							"Example: `/unsub https://git.gvk.idi.ntnu.no/course/prog2005`\n",
+						Inline: false,
+					},
+					{
+						Name:   "/deadlines",
+						Value:  "Get all the deadlines from the subscribed repo",
 						Inline: false,
 					},
 				},
@@ -135,5 +145,42 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	})
 	if err != nil {
 		log.Println("Failed to send subscription confimation")
+	}
+}
+
+// Respond with all deadlines for the repos registered for this channel
+func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	repoURL, err := firestore.GetRepoURLByChannelID(i.ChannelID)
+	if err != nil {
+		log.Println("Failed to get repoURL")
+		return
+	}
+
+	// Get deadlines from firestore
+	deadlines := firestore.GetDeadlinesByRepoURL(repoURL)
+
+	var fields []*discordgo.MessageEmbedField
+	for _, elem := range deadlines {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   elem.Title,
+			Value:  elem.Description + "\n\nDue: " + elem.DueDate,
+			Inline: false,
+		})
+	}
+
+	log.Println("Posting deadlines")
+	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionApplicationCommandResponseData{
+			Embeds: []*discordgo.MessageEmbed{{
+				Title:       "Deadlines",
+				Description: "Hei",
+				Color:       10181046,
+				Fields:      fields,
+			}},
+		},
+	})
+	if err != nil {
+		log.Println("Failed to post deadlines in response to deadlines command")
 	}
 }
