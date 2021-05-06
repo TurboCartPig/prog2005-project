@@ -65,9 +65,7 @@ deploy-to-gcp:
     - master
   before_script:
     # Authenticate with GCP
-    - gloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
+    - gcloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
   script:
     # Restart the VM. It will now automatically pull the new image
     - gcloud compute instance reset $CI_GCLOUD_VM
-  after_script:
-    - rm /tmp/$CI_PIPELINE_ID.json
