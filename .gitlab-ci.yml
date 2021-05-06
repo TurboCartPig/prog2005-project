@@ -63,9 +63,10 @@ deploy-to-gcp:
   needs: ["deploy-to-dockerhub"]
   only:
     - master
+  allow_failure: true
   before_script:
     # Authenticate with GCP
     - gcloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
   script:
-    # Restart the VM. It will now automatically pull the new image
+    # Restart the VM. It will now automatically pull the new image.
     - gcloud compute instances reset $CI_GCLOUD_VM --zone europe-west1-b
