@@ -111,7 +111,9 @@ func sendMessageToDiscord(deadline *types.Deadline) {
 		},
 	}
 	channelID := firestore.GetChannelIDByRepoURL(deadline.RepoWebURL)
-	discord.SendComplexMessage(channelID, &discordMessage)
+	for _, elem := range channelID {
+		discord.SendComplexMessage(elem, &discordMessage)
+	}
 }
 
 func isDeadline(webhook *types.WebhookData) bool {
