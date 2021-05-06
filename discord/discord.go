@@ -59,6 +59,7 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 
 	// Add event handler
+	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) { log.Println("Bot is up and running") })
 	session.AddHandler(handlers.MessageCreate)
 
 	// Specify minimal gateway intents
