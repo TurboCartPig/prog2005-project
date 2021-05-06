@@ -2,7 +2,18 @@
 stages:
   - build
   - lint
-  - deploy
+  - deploy-to-dockerhub
+  - deploy-to-gcp
+
+# Define a persistent cache for Go
+.go-cache:
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go
+  before_script:
+    - mkdir -p .go
+  cache:
+    paths:
+      - .go/pkg/mod/
 
 # Define the build stage
 # FIXME: alpine based golang images gives error here, but not in Dockerfile. WTF?
@@ -10,35 +21,53 @@ stages:
 build:
   stage: build
   image: golang:1.16
+  extends: .go-cache
   script:
-    # Setup a persistent cache
-    - export GOCACHE=$CI_PROJECT_DIR/.cache/gocache
     # Populate the cache with dependencies
     - go mod download
     # Build the project
     - go build -v -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/developer-bot ./main.go
-  cache:
-    key: build-cache
-    paths:
-      - .cache/
 
 # Define the linting stage
 lint:
   stage: lint
   image: golangci/golangci-lint:v1.39
+  extends: .go-cache
+  # Needs build stage to populate cache
+  needs: ["build"]
   script:
     # Run linting
     - golangci-lint run -v --timeout "10m"
 
-# Define a stage that builds the docker image, and deplyes it to dockerhub
-deploy:
-  stage: deploy
+# Define a stage that builds the docker image, and deploys it to dockerhub
+# TODO: Try to cache some layers here
+deploy-to-dockerhub:
+  stage: deploy-to-dockerhub
   image: docker:20.10.6 # Use the same version as the underlying executor
   only:
     - master
   before_script:
     - docker login -u $CI_DOCKERHUB_USER -p $CI_DOCKERHUB_PAT
   script:
+    # Print docker info to ease debugging
     - docker info
+    # Build an image from the project
     - docker build -t "$CI_DOCKERHUB_USER/developer-bot:latest" .
+    # Push built image to dockerhub
     - docker push "$CI_DOCKERHUB_USER/developer-bot:latest"
+
+# Define a stage that deploys the previously built image to our GCP VM
+deploy-to-gcp:
+  stage: deploy-to-gcp
+  image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+  needs: ["deploy-to-dockerhub"]
+  only:
+    - master
+  before_script:
+    # Authenticate with GCP
+    - gloud auth activate-service-account --key-file=$CI_GCLOUD_SAK --project $CI_GCLOUD_PROJECT
+  script:
+    # Restart the VM. It will now automatically pull the new image
+    - gcloud compute instance reset $CI_GCLOUD_VM
+  after_script:
+    - rm /tmp/$CI_PIPELINE_ID.json
