@@ -3,7 +3,7 @@ package main
 import (
 	"developer-bot/discord"
 	"developer-bot/endpoints"
-	"developer-bot/endpoints/firestore"
+	"developer-bot/firestore"
 	"os"
 	"os/signal"
 	"sync"

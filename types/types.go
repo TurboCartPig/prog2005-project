@@ -1,5 +1,7 @@
 package types
 
+import "github.com/bwmarrin/discordgo"
+
 type WebhookData struct {
 	EventType string `json:"event_type"`
 	User      User   `json:"user"`
@@ -81,3 +83,24 @@ var VotingEmojis = []string{
 	"8️⃣",
 	"9️⃣",
 }
+
+type Message interface{}
+
+type MessageSend struct {
+	ChannelID string
+	Content   string
+}
+
+type MessageSendComplex struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+}
+
+type MessageSendComplexWithFollowUp struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+	FollowUp  func(messageID, channelID string, object interface{})
+	Object    interface{}
+}
+
+type Shutdown struct{}

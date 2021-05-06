@@ -1,8 +1,8 @@
 package discord
 
 import (
-	"developer-bot/endpoints/firestore"
-	"developer-bot/endpoints/types"
+	"developer-bot/firestore"
+	"developer-bot/types"
 	"fmt"
 	"log"
 

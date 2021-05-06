@@ -1,51 +1,32 @@
 package discord
 
 import (
+	"developer-bot/types"
 	"log"
 	"sync"
 
 	"developer-bot/discord/handlers"
-	"developer-bot/endpoints/firestore"
+	"developer-bot/firestore"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var session *discordgo.Session
 
-type Message interface{}
-
-type MessageSend struct {
-	ChannelID string
-	Content   string
-}
-
-type MessageSendComplex struct {
-	ChannelID string
-	Message   *discordgo.MessageSend
-}
-
-type MessageSendComplexWithFollowUp struct {
-	ChannelID string
-	Message   *discordgo.MessageSend
-	FollowUp  func(messageID, channelID string, object interface{})
-	Object    interface{}
-}
-
-type Shutdown struct{}
-
-var messages = make(chan Message)
+var messages = make(chan types.Message)
 
 func SendMessage(channelID, content string) {
-	messages <- MessageSend{ChannelID: channelID, Content: content}
+	messages <- types.MessageSend{ChannelID: channelID, Content: content}
 }
 
 func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
-	messages <- MessageSendComplex{
+	messages <- types.MessageSendComplex{
 		ChannelID: channelID,
 		Message:   message,
 	}
 }
 
+<<<<<<< HEAD
 func SendComplexMessageWithFollowUp(
 	channelID string,
 	message *discordgo.MessageSend,
@@ -53,6 +34,10 @@ func SendComplexMessageWithFollowUp(
 	followUp func(string, string, interface{}),
 ) {
 	messages <- MessageSendComplexWithFollowUp{
+=======
+func SendComplexMessageWithFollowUp(channelID string, message *discordgo.MessageSend, object interface{}, followUp func(string, string, interface{})) { //nolint:lll
+	messages <- types.MessageSendComplexWithFollowUp{
+>>>>>>> fbba1cc (Major refactoring of some code)
 		ChannelID: channelID,
 		Message:   message,
 		FollowUp:  followUp,
@@ -61,7 +46,7 @@ func SendComplexMessageWithFollowUp(
 }
 
 func SendShutdown() {
-	messages <- Shutdown{}
+	messages <- types.Shutdown{}
 }
 
 func GetDiscordSession() *discordgo.Session {
@@ -111,23 +96,23 @@ func RunBot(wg *sync.WaitGroup) {
 	for {
 		input := <-messages
 		switch t := input.(type) {
-		case MessageSend:
+		case types.MessageSend:
 			_, err := session.ChannelMessageSend(t.ChannelID, t.Content)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-		case MessageSendComplex:
+		case types.MessageSendComplex:
 			_, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-		case MessageSendComplexWithFollowUp:
+		case types.MessageSendComplexWithFollowUp:
 			message, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
 			t.FollowUp(message.ID, t.ChannelID, t.Object)
-		case Shutdown:
+		case types.Shutdown:
 			return
 		}
 	}
@@ -141,8 +126,22 @@ func registerSlashCommands(session *discordgo.Session) {
 	for _, command := range Commands {
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, "", command)
 		if err != nil {
-			log.Printf("Failed to create command: %v, error %v", command.Name, err)
-			return
+		log.Printf("Failed to create command: %v, error %v", command.Name, err)
+		return
+		}
+	}
+}
+
+
+func HandleVote(messageID, channelID string, object interface{}) {
+	session := GetDiscordSession()
+
+	if t, ok := object.(*types.Vote); ok {
+		for _, elem := range t.Options {
+			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }

@@ -2,7 +2,7 @@ package endpoints
 
 import (
 	"developer-bot/discord"
-	"developer-bot/endpoints/firestore"
+	"developer-bot/firestore"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
-	"developer-bot/endpoints/types"
+	"developer-bot/types"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -155,22 +155,10 @@ func sendVoteToDiscord(vote *types.Vote) {
 	}
 	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
 	for _, elem := range channelID {
-		discord.SendComplexMessageWithFollowUp(elem, &discordMessage, vote, handleVote)
+		discord.SendComplexMessageWithFollowUp(elem, &discordMessage, vote, discord.HandleVote)
 	}
 }
 
-func handleVote(messageID, channelID string, object interface{}) {
-	session := discord.GetDiscordSession()
-
-	if t, ok := object.(*types.Vote); ok {
-		for _, elem := range t.Options {
-			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
-	}
-}
 
 func isLabel(webhook *types.WebhookData, labelIdentifier string) bool {
 	for _, label := range webhook.Labels {
