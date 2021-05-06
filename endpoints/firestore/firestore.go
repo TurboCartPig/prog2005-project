@@ -76,9 +76,8 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 		err = doc.DataTo(&cr)
 		if err != nil {
 			break
-
 		}
-		channelIDs = append(channelIDs,cr.ChannelID)
+		channelIDs = append(channelIDs, cr.ChannelID)
 	}
 	return channelIDs
 }
