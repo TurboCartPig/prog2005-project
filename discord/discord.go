@@ -28,7 +28,9 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
-// SendComplexMessageWithFollowUp sends message in specified discord channel, with a followup function that gets called after the message is sent, with the ID of the message.
+// SendComplexMessageWithFollowUp sends message in specified discord channel,
+// with a followup function that gets called after the message is sent,
+// with the ID of the message.
 func SendComplexMessageWithFollowUp(
 	channelID string,
 	message *discordgo.MessageSend,
