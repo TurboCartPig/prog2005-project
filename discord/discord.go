@@ -5,7 +5,6 @@ import (
 	"log"
 	"sync"
 
-	"developer-bot/discord/handlers"
 	"developer-bot/firestore"
 
 	"github.com/bwmarrin/discordgo"
@@ -68,8 +67,7 @@ func RunBot(wg *sync.WaitGroup) {
 
 	// Add handler to notify when the bot is ready
 	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) { log.Println("Bot is up and running") })
-	// Add handler for new messages being posted
-	session.AddHandler(handlers.MessageCreate)
+
 	// Add handler for individual slash commands
 	session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if handler, ok := CommandHandlers[i.Data.Name]; ok {
