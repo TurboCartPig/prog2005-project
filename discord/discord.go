@@ -13,12 +13,15 @@ import (
 
 var session *discordgo.Session
 
+// messages revices messages and executes them within the discord goroutine.
 var messages = make(chan types.Message)
 
+// SendMessage sends message in specified discord channel.
 func SendMessage(channelID, content string) {
 	messages <- types.MessageSend{ChannelID: channelID, Content: content}
 }
 
+// SendComplexMessage sends message in specified discord channel.
 func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	messages <- types.MessageSendComplex{
 		ChannelID: channelID,
@@ -26,6 +29,7 @@ func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
 	}
 }
 
+// SendComplexMessageWithFollowUp sends message in specified discord channel, with a followup function that gets called <TODO>.
 func SendComplexMessageWithFollowUp(
 	channelID string,
 	message *discordgo.MessageSend,
@@ -40,6 +44,7 @@ func SendComplexMessageWithFollowUp(
 	}
 }
 
+// SendShutdown message to discord bot.
 func SendShutdown() {
 	messages <- types.Shutdown{}
 }
@@ -84,6 +89,10 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 	defer session.Close()
 
+	// Respond to incomming messages from the rest of the program,
+	// and perform actions in the context of a discord session.
+	// This takes care of all syncronization issues and provides a uniform API
+	// for the rest of the program.
 	for {
 		input := <-messages
 		switch t := input.(type) {

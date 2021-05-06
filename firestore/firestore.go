@@ -14,6 +14,7 @@ import (
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
+// client is the local firestore client.
 var client *firestore.Client
 
 const (
@@ -41,6 +42,7 @@ func ShutdownClient() {
 	client.Close()
 }
 
+// SaveDeadlineToFirestore registers a deadline in firestore.
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
 	_, _, err := client.Collection(DeadlinesCollection).Add(ctx, *deadline)
@@ -50,6 +52,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	}
 }
 
+// SaveChannelRegistration registers a channelID and repo url pair in firebase.
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
@@ -58,6 +61,7 @@ func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	}
 }
 
+// GetChannelIDByRepoURL gets the channelIDs associated with a given repo url.
 func GetChannelIDByRepoURL(repoURL string) []string {
 	ctx := context.Background()
 	iter := client.Collection(ChannelRegistrationsCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
@@ -82,6 +86,7 @@ func GetChannelIDByRepoURL(repoURL string) []string {
 	return channelIDs
 }
 
+// GetRepoURLByChannelID gets the repo url for a given channelID.
 func GetRepoURLByChannelID(channelID string) (string, error) {
 	ctx := context.Background()
 	docref := client.Collection(ChannelRegistrationsCollection).Doc(channelID)
@@ -101,7 +106,7 @@ func GetRepoURLByChannelID(channelID string) (string, error) {
 	return cr.RepoWebURL, nil
 }
 
-// Get all the deadlines for a given repo.
+// GetDeadlinesByRepoURL gets all the deadlines for a given repo.
 func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 	ctx := context.Background()
 	iter := client.Collection(DeadlinesCollection).Where("RepoWebURL", "==", repoURL).Documents(ctx)
@@ -129,6 +134,7 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 	return deadlines
 }
 
+// DeleteChannelRegistations deletes all registered repos for a given channelID.
 func DeleteChannelRegistrations(channelID string) error {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)
