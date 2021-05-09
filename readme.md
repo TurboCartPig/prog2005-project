@@ -59,20 +59,21 @@ And to shut the container down:
 docker-compose down
 ```
 
-## CI
+## Continues Integration and Continues Deployment
 
-This project uses a GitLab's CI pipelines to validate the state of the project and to produce artifacts. The CI consists of multiple stages, the descriptions of which you can find below. The purpose of the CI is to catch errors as early as possible, to do regression testing, and to prevent faulty code from going into production. The CI as configured caches all that it can quite aggressively, in order to increase performance and save on network bandwidth. This is necessary as the runner is hosted on Skyhigh, and is quite resource constrained.
+This project uses a GitLab's CI/CD pipelines to validate the state of the project and to produce artifacts. The CI consists of multiple stages, the descriptions of which you can find below. The purpose of the CI is to catch errors as early as possible, to do regression testing, and to prevent faulty code from going into production. The CI as configured caches all that it can quite aggressively, in order to increase performance and save on network bandwidth. This is necessary as the runner is hosted on Skyhigh, and is quite resource constrained.
 
+The pipeline currently has these stages:
 1. Build stage - Builds the project as a normal Go binary, just to make sure there are no config issues or trivial mistakes in syntax.
 2. Lint stage - More detailed analysis of the code to find common mistakes and anti-patterns.
-
-Stages yet to be added:
-3. Docker build stage - Build the project as a Docker container, via Dockerfile or docker-compose.
-4. Deployment stage - Deploy the docker image built in the previous stage.
+3. Deploy-to-dockerhub - Builds the docker container and pushes it to dockerhub.
+4. Deploy-to-gcp - Notifies the VM on GCP to reset and pull down the new image.
 
 # Deployment
 
 There are a few considerations to take into account when considering how to deploy the bot. Mainly how it's built, how to run it and keep it running, and how to configure access to the secret token.
+
+The reason we did not use services like Cloud Run, Cloud Functions, or Heroku, is that Discord bots need to be continuously running. They can not just wake up when a request is sent the way these services expect.
 
 ## GCP via Container optimized OS
 
@@ -92,6 +93,8 @@ This is the config the current deployment uses.
 
 - Manually copy over a service account key
 - Deploy using docker-compose
+- Or directly with docker, setting up the tmpfs binding manually
+- Or using dockers swarm mode
 
 ## Heroku
 
