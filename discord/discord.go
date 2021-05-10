@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"developer-bot/firestore"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -151,8 +150,46 @@ func HandleVote(messageID, channelID string, object interface{}) {
 		if err != nil {
 			log.Print("Could not retrieve results of vote")
 		}
-		for _,elem := range votingResults.Reactions {
-			log.Print(elem.Count)
+		var highestCount int
+		var possibleOptionsForRevote []types.Option
+		for i,elem := range votingResults.Reactions {
+			if elem.Count > highestCount {
+				highestCount = elem.Count
+			}
+			if elem.Count == highestCount {
+				possibleOptionsForRevote = append(possibleOptionsForRevote,t.Options[i])
+			}
 		}
+		// THIS SHOULD BE WRAPPED IN AN IF/ELSE, BUT IS NOT FOR DEV PURPOSES
+		t.Options = possibleOptionsForRevote
+		err = session.ChannelMessageDelete(channelID,messageID)
+		if err != nil {
+			log.Print(err)
+		}
+		SendVoteToDiscord(t)
+	}
+}
+
+
+func SendVoteToDiscord(vote *types.Vote) {
+	var fields []*discordgo.MessageEmbedField
+	for _, elem := range vote.Options {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   elem.Title,
+			Value:  elem.Description,
+			Inline: false,
+		})
+	}
+	discordMessage := discordgo.MessageSend{
+		Content: "New vote",
+		Embed: &discordgo.MessageEmbed{
+			Color:  10181046,
+			Title:  vote.Title,
+			Fields: fields,
+		},
+	}
+	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
+	for _, elem := range channelID {
+		SendComplexMessageWithFollowUp(elem, &discordMessage, vote, HandleVote)
 	}
 }

@@ -112,7 +112,7 @@ func processWebhook(webhook *types.WebhookData) {
 			Options:     opt,
 			IssueWebURL: webhook.ObjectAttributes.URL,
 		}
-		sendVoteToDiscord(&vote)
+		discord.SendVoteToDiscord(&vote)
 	}
 }
 
@@ -139,28 +139,7 @@ func sendDeadlineToDiscord(deadline *types.Deadline) {
 	}
 }
 
-func sendVoteToDiscord(vote *types.Vote) {
-	var fields []*discordgo.MessageEmbedField
-	for _, elem := range vote.Options {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   elem.Title,
-			Value:  elem.Description,
-			Inline: false,
-		})
-	}
-	discordMessage := discordgo.MessageSend{
-		Content: "New vote",
-		Embed: &discordgo.MessageEmbed{
-			Color:  10181046,
-			Title:  vote.Title,
-			Fields: fields,
-		},
-	}
-	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
-	for _, elem := range channelID {
-		discord.SendComplexMessageWithFollowUp(elem, &discordMessage, vote, discord.HandleVote)
-	}
-}
+
 
 func isLabel(webhook *types.WebhookData, labelIdentifier string) bool {
 	for _, label := range webhook.Labels {

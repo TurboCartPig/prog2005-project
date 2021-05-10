@@ -69,7 +69,6 @@ type Option struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	EmojiCode   string `json:"emoji"`
-	VoteCount   int    `json:"vote_count"`
 }
 
 var VotingEmojis = []string{
