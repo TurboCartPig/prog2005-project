@@ -10,6 +10,8 @@ Deadlines:
 Decisions:
 > TODO: Specify how decisions work and how to interact with them
 
+To test the bot, join this server where everything is already set up: https://discord.gg/zttrbRzeuw
+
 # Development
 
 The development of this project is centered around docker-compose and containerization. You *can* build the server as a binary manually, but you will have a more difficult time deploying it.
