@@ -140,5 +140,16 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				log.Println(err)
 			}
 		}
+		channel, err := session.Channel(channelID)
+		if err != nil {
+			log.Printf("Could not find channel with ID <%s>",channelID)
+		}
+		guildID := channel.GuildID
+		guild, err := session.Guild(guildID)
+		log.Print(guildID)
+		if err != nil {
+			log.Printf("Could not find guild with ID <%s>",guildID)
+		}
+		log.Print(guild.MemberCount)
 	}
 }
