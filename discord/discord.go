@@ -144,6 +144,5 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				log.Println(err)
 			}
 		}
-
 	}
 }
