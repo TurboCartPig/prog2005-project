@@ -70,8 +70,11 @@ func routes() *chi.Mux {
 func developer(w http.ResponseWriter, r *http.Request) {
 	var newWebhook types.WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
+
+	// If the body is not a issue body, simply ignore it.
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusAccepted)
+		return
 	}
 
 	processWebhook(&newWebhook)
