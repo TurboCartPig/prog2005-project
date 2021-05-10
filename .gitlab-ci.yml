@@ -45,7 +45,8 @@ deploy-to-dockerhub:
   stage: deploy-to-dockerhub
   image: docker:20.10.6 # Use the same version as the underlying executor
   only:
-    # - master
+    - master
+    - dev-ci
   variables:
     BUILD_IMAGE: "$CI_DOCKERHUB_USER/developer-bot-build:latest"
     FINAL_IMAGE: "$CI_DOCKERHUB_USER/developer-bot:latest"
