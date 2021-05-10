@@ -112,7 +112,7 @@ func processWebhook(webhook *types.WebhookData) {
 			Options:     opt,
 			IssueWebURL: webhook.ObjectAttributes.URL,
 		}
-		discord.SendVoteToDiscord(&vote)
+		discord.SendVoteToDiscord(vote)
 	}
 }
 

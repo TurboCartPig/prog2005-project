@@ -85,11 +85,6 @@ var VotingEmojis = []string{
 
 type Message interface{}
 
-type MessageSend struct {
-	ChannelID string
-	Content   string
-}
-
 type MessageSendComplex struct {
 	ChannelID string
 	Message   *discordgo.MessageSend
