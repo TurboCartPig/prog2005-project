@@ -201,7 +201,6 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 }
 
 func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	log.Print("command " + i.ChannelID)
 	// Send endvote signal to the appropriate vote tracker
 	if c, ok := votingChannels[i.ChannelID]; ok {
 		c <- 1
