@@ -44,6 +44,10 @@ var (
 			Name:        "deadlines",
 			Description: "Get all deadlines from subscribed GitLab repo",
 		},
+		{
+			Name:        "endvote",
+			Description: "End the ongoing vote, and cast the result",
+		},
 	}
 	// CommandHandlers defines what functions to call when slash commands are used
 	CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
@@ -51,6 +55,7 @@ var (
 		"sub":       commandHandlerSub,
 		"unsub":     commandHandlerUnsub,
 		"deadlines": commandHandlerDeadlines,
+		"endvote":   commandHandlerEndvote,
 	}
 )
 
@@ -184,7 +189,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 		Data: &discordgo.InteractionApplicationCommandResponseData{
 			Embeds: []*discordgo.MessageEmbed{{
 				Title:       "Deadlines",
-				Description: "Hei",
+				Description: "",
 				Color:       10181046,
 				Fields:      fields,
 			}},
@@ -192,5 +197,24 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 	})
 	if err != nil {
 		log.Println("Failed to post deadlines in response to deadlines command")
+	}
+}
+
+func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Send endvote signal to the appropriate vote tracker
+	if c, ok := votingChannels[i.ChannelID]; ok {
+		c <- 1
+	}
+
+	// Acknowlege the command, the processing of the vote is handled elsewere
+	log.Println("Ending vote")
+	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionApplicationCommandResponseData{
+			Content: "Processing results",
+		},
+	})
+	if err != nil {
+		log.Println("Failed to post acknowlegement of endvote")
 	}
 }
