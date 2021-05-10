@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"developer-bot/firestore"
+
 	"github.com/bwmarrin/discordgo"
 )
 
