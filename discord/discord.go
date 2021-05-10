@@ -12,6 +12,8 @@ import (
 
 var session *discordgo.Session
 
+var votingChannels map[string]chan int
+
 // messages revices messages and executes them within the discord goroutine.
 var messages = make(chan types.Message)
 
@@ -54,6 +56,8 @@ func SendShutdown() {
 func RunBot(wg *sync.WaitGroup) {
 	defer log.Println("Discord bot shut down")
 	defer wg.Done() // Decrement wg AFTER sessing is closed
+
+	votingChannels = make(map[string]chan int)
 
 	// Get the bot token and open a discord session with it
 	token, err := firestore.GetBotToken()
@@ -140,16 +144,6 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				log.Println(err)
 			}
 		}
-		channel, err := session.Channel(channelID)
-		if err != nil {
-			log.Printf("Could not find channel with ID <%s>",channelID)
-		}
-		guildID := channel.GuildID
-		guild, err := session.Guild(guildID)
-		log.Print(guildID)
-		if err != nil {
-			log.Printf("Could not find guild with ID <%s>",guildID)
-		}
-		log.Print(guild.MemberCount)
+
 	}
 }
