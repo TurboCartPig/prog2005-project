@@ -201,12 +201,13 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 }
 
 func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	log.Print("command " + i.ChannelID)
 	// Send endvote signal to the appropriate vote tracker
 	if c, ok := votingChannels[i.ChannelID]; ok {
 		c <- 1
 	}
 
-	// Acknowlege the command, the processing of the vote is handled elsewere
+	// Acknowledge the command, the processing of the vote is handled elsewere
 	log.Println("Ending vote")
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -215,6 +216,6 @@ func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate)
 		},
 	})
 	if err != nil {
-		log.Println("Failed to post acknowlegement of endvote")
+		log.Println("Failed to post acknowledgement of endvote")
 	}
 }

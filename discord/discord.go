@@ -145,6 +145,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				log.Println(err)
 			}
 		}
+		log.Print("vote " + channelID)
 		<- votingChannels[channelID] // Wait for the /endvote command in the relevant channel
 		votingResults,err := session.ChannelMessage(channelID,messageID)
 		if err != nil {
