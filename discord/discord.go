@@ -136,6 +136,7 @@ func registerSlashCommands(session *discordgo.Session) {
 	}
 }
 
+// The logic for handling a new vote regarding a project decision.
 func HandleVote(messageID, channelID string, object interface{}) {
 	if t, ok := object.(*types.Vote); ok {
 		for _, elem := range t.Options {
@@ -144,6 +145,13 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				log.Println(err)
 			}
 		}
-
+		<- votingChannels[channelID] // Wait for the /endvote command in the relevant channel
+		votingResults,err := session.ChannelMessage(channelID,messageID)
+		if err != nil {
+			log.Print("Could not retrieve results of vote")
+		}
+		for _,elem := range votingResults.Reactions {
+			log.Print(elem.Count)
+		}
 	}
 }
