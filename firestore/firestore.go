@@ -4,6 +4,7 @@ import (
 	"context"
 	"developer-bot/types"
 	"log"
+	"time"
 
 	"google.golang.org/api/iterator"
 
@@ -127,7 +128,14 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 			continue
 		}
 
-		deadlines = append(deadlines, deadline)
+		if deadline.DueDate <= time.Now().String()[:10] {
+			_, err = client.Collection(DeadlinesCollection).Doc(doc.Ref.ID).Delete(ctx)
+			if err != nil {
+				log.Printf("Could not delete document with ID %s",doc.Ref.ID)
+			}
+		} else {
+			deadlines = append(deadlines, deadline)
+		}
 	}
 
 	return deadlines

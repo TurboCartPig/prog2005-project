@@ -141,6 +141,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 		votingResults, err := session.ChannelMessage(channelID, messageID)
 		if err != nil {
 			log.Print("Could not retrieve results of vote")
+			return
 		}
 		highestCount := 0
 		var possibleOptionsForRevote []types.Option
@@ -154,13 +155,12 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				possibleOptionsForRevote = append(possibleOptionsForRevote, t.Options[i])
 			}
 		}
-
-		// THIS SHOULD BE WRAPPED IN AN IF/ELSE, BUT IS NOT FOR DEV PURPOSES
 		if len(possibleOptionsForRevote) > 1 {
 			t.Options = possibleOptionsForRevote
 			err = session.ChannelMessageDelete(channelID, messageID)
 			if err != nil {
 				log.Print(err)
+				return
 			}
 			SendVoteToDiscord(t)
 		} else {
@@ -179,7 +179,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 					URL:         issueURL,
 					Title:       chosen.Title,
 					Description: chosen.Description,
-					Color:       15158332,
+					Color:       15277667,
 				},
 			}
 			SendComplexMessage(channelID, &discordMessage)
