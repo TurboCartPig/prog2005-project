@@ -30,7 +30,7 @@ var (
 		},
 		{
 			Name:        "unsub",
-			Description: "Unsubscribe to a GitLab repository",
+			Description: "Unsubscribe from a GitLab repository",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
@@ -147,7 +147,7 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
-			Content: fmt.Sprintf("Subscribing to %s", url),
+			Content: fmt.Sprintf("Unsubscribing from %s", url),
 		},
 	})
 	if err != nil {
