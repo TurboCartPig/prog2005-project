@@ -70,8 +70,11 @@ func routes() *chi.Mux {
 func developer(w http.ResponseWriter, r *http.Request) {
 	var newWebhook types.WebhookData
 	err := json.NewDecoder(r.Body).Decode(&newWebhook)
+
+	// If the body is not a issue body, simply ignore it.
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		w.WriteHeader(http.StatusAccepted)
+		return
 	}
 
 	processWebhook(&newWebhook)
@@ -109,7 +112,7 @@ func processWebhook(webhook *types.WebhookData) {
 			Options:     opt,
 			IssueWebURL: webhook.ObjectAttributes.URL,
 		}
-		sendVoteToDiscord(&vote)
+		discord.SendVoteToDiscord(vote)
 	}
 }
 
@@ -133,29 +136,6 @@ func sendDeadlineToDiscord(deadline *types.Deadline) {
 	channelID := firestore.GetChannelIDByRepoURL(deadline.RepoWebURL)
 	for _, elem := range channelID {
 		discord.SendComplexMessage(elem, &discordMessage)
-	}
-}
-
-func sendVoteToDiscord(vote *types.Vote) {
-	var fields []*discordgo.MessageEmbedField
-	for _, elem := range vote.Options {
-		fields = append(fields, &discordgo.MessageEmbedField{
-			Name:   elem.Title,
-			Value:  elem.Description,
-			Inline: false,
-		})
-	}
-	discordMessage := discordgo.MessageSend{
-		Content: "New vote",
-		Embed: &discordgo.MessageEmbed{
-			Color:  10181046,
-			Title:  vote.Title,
-			Fields: fields,
-		},
-	}
-	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
-	for _, elem := range channelID {
-		discord.SendComplexMessageWithFollowUp(elem, &discordMessage, vote, discord.HandleVote)
 	}
 }
 

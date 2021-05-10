@@ -4,6 +4,7 @@ import (
 	"context"
 	"developer-bot/types"
 	"log"
+	"time"
 
 	"google.golang.org/api/iterator"
 
@@ -91,14 +92,14 @@ func GetRepoURLByChannelID(channelID string) (string, error) {
 	docref := client.Collection(ChannelRegistrationsCollection).Doc(channelID)
 	docsnap, err := docref.Get(ctx)
 	if err != nil {
-		log.Println("Faild to get document from firebase:", err)
+		log.Println("Failed to get document from firebase:", err)
 		return "", err
 	}
 
 	var cr types.ChannelRegistration
 	err = docsnap.DataTo(&cr)
 	if err != nil {
-		log.Println("Failed to parse the docuent into ChannelRegistration")
+		log.Println("Failed to parse the document into ChannelRegistration")
 		return "", err
 	}
 
@@ -127,13 +128,20 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 			continue
 		}
 
-		deadlines = append(deadlines, deadline)
+		if deadline.DueDate < time.Now().String()[:10] {
+			_, err = client.Collection(DeadlinesCollection).Doc(doc.Ref.ID).Delete(ctx)
+			if err != nil {
+				log.Printf("Could not delete document with ID %s", doc.Ref.ID)
+			}
+		} else {
+			deadlines = append(deadlines, deadline)
+		}
 	}
 
 	return deadlines
 }
 
-// DeleteChannelRegistations deletes all registered repos for a given channelID.
+// DeleteChannelRegistrations deletes all registered repos for a given channelID.
 func DeleteChannelRegistrations(channelID string) error {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelID).Delete(ctx)

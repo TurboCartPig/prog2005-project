@@ -2,7 +2,9 @@ package discord
 
 import (
 	"developer-bot/types"
+	"fmt"
 	"log"
+	"net/url"
 	"sync"
 
 	"developer-bot/firestore"
@@ -16,11 +18,6 @@ var votingChannels map[string]chan int
 
 // messages revices messages and executes them within the discord goroutine.
 var messages = make(chan types.Message)
-
-// SendMessage sends message in specified discord channel.
-func SendMessage(channelID, content string) {
-	messages <- types.MessageSend{ChannelID: channelID, Content: content}
-}
 
 // SendComplexMessage sends message in specified discord channel.
 func SendComplexMessage(channelID string, message *discordgo.MessageSend) {
@@ -100,11 +97,6 @@ func RunBot(wg *sync.WaitGroup) {
 	for {
 		input := <-messages
 		switch t := input.(type) {
-		case types.MessageSend:
-			_, err := session.ChannelMessageSend(t.ChannelID, t.Content)
-			if err != nil {
-				log.Println("Failed to send message: ", err)
-			}
 		case types.MessageSendComplex:
 			_, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
 			if err != nil {
@@ -115,7 +107,7 @@ func RunBot(wg *sync.WaitGroup) {
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
-			t.FollowUp(message.ID, t.ChannelID, t.Object)
+			go t.FollowUp(message.ID, t.ChannelID, t.Object)
 		case types.Shutdown:
 			return
 		}
@@ -136,13 +128,87 @@ func registerSlashCommands(session *discordgo.Session) {
 	}
 }
 
+// The logic for handling a new vote regarding a project decision.
 func HandleVote(messageID, channelID string, object interface{}) {
-	if t, ok := object.(*types.Vote); ok {
+	if t, ok := object.(types.Vote); ok {
 		for _, elem := range t.Options {
 			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
 			if err != nil {
 				log.Println(err)
 			}
 		}
+		votingChannels[channelID] = make(chan int, 1)
+		<-votingChannels[channelID] // Wait for the /endvote command in the relevant channel
+		votingResults, err := session.ChannelMessage(channelID, messageID)
+		if err != nil {
+			log.Print("Could not retrieve results of vote")
+			return
+		}
+		highestCount := 0
+		var possibleOptionsForRevote []types.Option
+		for _, elem := range votingResults.Reactions {
+			if elem.Count > highestCount {
+				highestCount = elem.Count
+			}
+		}
+		for i, elem := range votingResults.Reactions {
+			if elem.Count == highestCount {
+				possibleOptionsForRevote = append(possibleOptionsForRevote, t.Options[i])
+			}
+		}
+		if len(possibleOptionsForRevote) > 1 {
+			t.Options = possibleOptionsForRevote
+			err = session.ChannelMessageDelete(channelID, messageID)
+			if err != nil {
+				log.Print(err)
+				return
+			}
+			SendVoteToDiscord(t)
+		} else {
+			err = session.ChannelMessageDelete(channelID, messageID)
+			if err != nil {
+				log.Print(err)
+			}
+			chosen := possibleOptionsForRevote[0]
+			issueURL := fmt.Sprintf("%s/issues/new?issue[title]=%s&issue[description]=%s",
+				t.RepoWebURL,
+				url.QueryEscape(chosen.Title),
+				url.QueryEscape(chosen.Description))
+			discordMessage := discordgo.MessageSend{
+				Content: "Voting has ended:",
+				Embed: &discordgo.MessageEmbed{
+					URL:         issueURL,
+					Title:       chosen.Title,
+					Description: chosen.Description,
+					Color:       15277667,
+				},
+			}
+			SendComplexMessage(channelID, &discordMessage)
+		}
+	}
+}
+
+func SendVoteToDiscord(vote types.Vote) {
+	log.Print("Sending vote to discord")
+	log.Print(vote)
+	var fields []*discordgo.MessageEmbedField
+	for _, elem := range vote.Options {
+		fields = append(fields, &discordgo.MessageEmbedField{
+			Name:   elem.Title,
+			Value:  elem.Description,
+			Inline: false,
+		})
+	}
+	discordMessage := discordgo.MessageSend{
+		Content: "New vote",
+		Embed: &discordgo.MessageEmbed{
+			Color:  10181046,
+			Title:  vote.Title,
+			Fields: fields,
+		},
+	}
+	channelID := firestore.GetChannelIDByRepoURL(vote.RepoWebURL)
+	for _, elem := range channelID {
+		SendComplexMessageWithFollowUp(elem, &discordMessage, vote, HandleVote)
 	}
 }
