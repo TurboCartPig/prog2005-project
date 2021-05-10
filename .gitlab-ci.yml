@@ -46,15 +46,27 @@ deploy-to-dockerhub:
   image: docker:20.10.6 # Use the same version as the underlying executor
   only:
     - master
+    - dev-ci
+  variables:
+    BUILD_IMAGE: "$CI_DOCKERHUB_USER/developer-bot-build:latest"
+    FINAL_IMAGE: "$CI_DOCKERHUB_USER/developer-bot:latest"
   before_script:
     - docker login -u $CI_DOCKERHUB_USER -p $CI_DOCKERHUB_PAT
   script:
     # Print docker info to ease debugging
     - docker info
-    # Build an image from the project
-    - docker build -t "$CI_DOCKERHUB_USER/developer-bot:latest" .
+    # Pull the previously built build image
+    - docker pull $BUILD_IMAGE || true
+    # Build the new build image
+    - docker build --tag $BUILD_IMAGE --target build --cache-from $BUILD_IMAGE .
+    # Cache the build image
+    - docker push $BUILD_IMAGE
+    # Pull the previous final image
+    - docker pull $FINAL_IMAGE
+    # Build the final image for the project
+    - docker build --tag $FINAL_IMAGE --cache-from $FINAL_IMAGE --cache-from $BUILD_IMAGE .
     # Push built image to dockerhub
-    - docker push "$CI_DOCKERHUB_USER/developer-bot:latest"
+    - docker push $FINAL_IMAGE
 
 # Define a stage that deploys the previously built image to our GCP VM
 deploy-to-gcp:
