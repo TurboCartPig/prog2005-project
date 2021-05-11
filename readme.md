@@ -12,6 +12,8 @@ Decisions:
 
 To test the bot, join this server where everything is already set up: https://discord.gg/zttrbRzeuw
 
+Or, add the bot to your server by clicking [here](https://discord.com/oauth2/authorize?client_id=833463919099772998&scope=bot%20applications.commands)
+
 # Development
 
 The development of this project is centered around docker-compose and containerization. You *can* build the server as a binary manually, but you will have a more difficult time deploying it.
