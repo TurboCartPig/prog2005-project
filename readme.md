@@ -15,7 +15,7 @@ http://34.78.139.9:80/developer
 
 <ol>
 <li>Navigate to your desired GitLab project's page</li>
-<li>Go to the <code>Settings/Webhooks</code> menu in the sidebar</li>
+<li>Go to the <code>Settings/Webhooks</code> page in the sidebar</li>
 <li>Paste the link to the deployed service's developer endpoint (The link provided above) into the URL field.</li>
 <li>Unselect all triggers except for <b>Issues events</b></li>
 <li>Leave SSL verification unchanged</li>
@@ -42,6 +42,24 @@ If everything had been set up correctly, you should be able to see the following
 The exact same approach as subscribing, except that you use the `/unsub <Repository url>` command instead
 ## Deadlines
 ### Posting a new deadline issue on GitLab
+All deadline issues being created in a repository that has been set up with webhook's on GitLab and is being subscribed to in a Discord server will trigger a notification in the relevant Channels. 
+<ol>
+<li>Navigate to your desired GitLab project's page</li>
+<li>Go to the <code>Issues</code> page</li>
+<li>Press the <span style="color:white;background-color:dodgerblue">New issue</span> button</li>
+<li>Fill in all the necessary fields:
+<ul>
+<li><span style="color:white;background-color:rgb(179,21,100)">Title</span></li>
+<li><span style="color:white;background-color:rgb(162,230,27)">Description</span></li>
+<li><span style="color:white;background-color:rgb(0,77,230)">Label (Deadline)</span></li>
+<li><span style="color:white;background-color:rgb(255,147,255)">Due date</span></li>
+</ul>
+
+![Example of new deadline](.gitlab/new_issue_example.png)
+</li>
+<li>Press the <span style="color:white;background-color:dodgerblue">Create issue</span> button</li>
+</ol>
+
 ### Fetch all deadlines
 ## Voting
 ### Posting a new vote on Gitlab
