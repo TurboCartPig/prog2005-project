@@ -26,7 +26,20 @@ If everything had been set up correctly, you should be able to see the following
 ![Registered webhook](.gitlab/registered_webhook.png)
 
 ### Registering a new project (repository) in a Discord server
+> PUT INVITE LINK TO THE TEST SERVER HERE
+<ol>
+<li>Navigate to a Discord server which has the developer-bot added to it</li>
+<li>Type in the <code>/sub</code> command, followed by the relevant project's URL</li>
+
+![Example of where to locate the URL](.gitlab/project_url.png)
+<li>In this particular case, the whole command would have been <code>/sub https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/webhook</code></li>
+<li>You should receive a confirmation message from the bot indicating that the repository is now being subscribed to</li>
+
+![Example of repo being subbed to](.gitlab/subbed_to_repo.png)
+</ol>
+
 ### Unregistering a project (repository) in a Discord server
+The exact same approach as subscribing, except that you use the `/unsub <Repository url>` command instead
 ## Deadlines
 ### Posting a new deadline issue on GitLab
 ### Fetch all deadlines
