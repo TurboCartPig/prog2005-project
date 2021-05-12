@@ -95,7 +95,12 @@ func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
 					},
 					{
 						Name:   "/deadlines",
-						Value:  "Get all the deadlines from the subscribed repo",
+						Value:  "Get all the deadlines from the subscribed repo.",
+						Inline: false,
+					},
+					{
+						Name:   "/endvote",
+						Value:  "End the current ongoing vote.",
 						Inline: false,
 					},
 				},
@@ -200,6 +205,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 	}
 }
 
+// End the current ongoing vote.
 func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// Send endvote signal to the appropriate vote tracker
 	if c, ok := votingChannels[i.ChannelID]; ok {
