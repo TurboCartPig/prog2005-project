@@ -2,19 +2,54 @@
 
 # Developer bot
 
-This is a Discord bot with two main pieces of functionality. It can extract deadlines from GitLab issue tracker. And it can create decision polls on special issues in GitLab. It does this by using GitLab's webhook interface, in order to receive data from GitLab, and simultaneously runs a discord bot, that facilitates user interaction.
+This is a Discord bot with two main pieces of functionality. It can extract deadlines from GitLab issue tracker, and it can create decision polls on special issues in GitLab. It does this by using GitLab's webhook interface,
+in order to receive data from GitLab, and simultaneously runs a discord bot, that facilitates user interaction.
 
-Deadlines:
-> TODO: Specify how deadlines work and how to interact with them
+# Using the service
+## General
+### Registering a new project (repository) on GitLab
+The URL for registering new webhooks
+```
+http://34.78.139.9:80/developer
+```
 
-Decisions:
-> TODO: Specify how decisions work and how to interact with them
+<ol>
+<li>Navigate to your desired GitLab project's page</li>
+<li>Go to the <code>Settings/Webhooks</code> menu in the sidebar</li>
+<li>Paste the link to the deployed service's developer endpoint (The link provided above) into the URL field.</li>
+<li>Unselect all triggers except for <b>Issues events</b></li>
+<li>Leave SSL verification unchanged</li>
+<li>Press the <span style="color:white;background-color:dodgerblue">Add webhook</span> button</li>
+</ol>
+If everything had been set up correctly, you should be able to see the following under Project hooks:
+
+![Registered webhook](.gitlab/registered_webhook.png)
+
+### Registering a new project (repository) in a Discord server
+### Unregistering a project (repository) in a Discord server
+## Deadlines
+### Posting a new deadline issue on GitLab
+### Fetch all deadlines
+## Voting
+### Posting a new vote on Gitlab
+> Fetch all deadlines video goes here
+### Voting in Discord
+> Fetch all deadlines video goes here
+### Ending a vote
+> Fetch all deadlines video goes here
 
 # Development
 
-The development of this project is centered around docker-compose and containerization. You *can* build the server as a binary manually, but you will have a more difficult time deploying it.
+The development of this project is centered around docker-compose and containerization. You *can* build the 
+server as a binary manually, but you will have a more difficult time deploying it.
 
-Both the docker-compose setup and a manual setup requires the presence of a `service-account-key.json` from GCP. This is used both to authorize Firestore and Google Cloud's Secret Manager, the latter is where the Discord bot token is stored and accessed securely. The account key requires the roles `INSERT FIRESTORE ADMIN ROLE` and `INSERT SECRET MANAGER SECRET ACCESSOR ROLE`. The key is discovered from the environment variable `GOOGLE_APPLICATION_CREDENTIALS`, which contains a path pointing to the service key, default should be `./service-account-key.json`. This is made available to the container through docker-compose's secrets or GCP's provisioning.
+Both the docker-compose setup and a manual setup requires the presence of a `service-account-key.json` 
+from GCP. This is used both to authorize Firestore and Google Cloud's Secret Manager, the latter is where the
+Discord bot token is stored and accessed securely. The account key requires the roles `INSERT FIRESTORE ADMIN ROLE` 
+and `INSERT SECRET MANAGER SECRET ACCESSOR ROLE`. The key is discovered from the environment variable 
+`GOOGLE_APPLICATION_CREDENTIALS`, which contains a path pointing to the service key, default should be 
+`./service-account-key.json`. This is made available to the container through docker-compose's secrets or GCP's
+provisioning.
 
 ## Building
 
