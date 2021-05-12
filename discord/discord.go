@@ -175,7 +175,6 @@ func HandleVote(messageID, channelID string, object interface{}) {
 				url.QueryEscape(chosen.Title),
 				url.QueryEscape(chosen.Description))
 			discordMessage := discordgo.MessageSend{
-				Content: "Voting has ended:",
 				Embed: &discordgo.MessageEmbed{
 					URL:         issueURL,
 					Title:       chosen.Title,
@@ -190,7 +189,6 @@ func HandleVote(messageID, channelID string, object interface{}) {
 
 func SendVoteToDiscord(vote types.Vote) {
 	log.Print("Sending vote to discord")
-	log.Print(vote)
 	var fields []*discordgo.MessageEmbedField
 	for _, elem := range vote.Options {
 		fields = append(fields, &discordgo.MessageEmbedField{

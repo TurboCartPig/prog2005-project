@@ -211,7 +211,7 @@ func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate)
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
-			Content: "Processing results",
+			Content: "Voting has ended:",
 		},
 	})
 	if err != nil {

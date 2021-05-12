@@ -51,7 +51,7 @@ All deadline issues being created in a repository that has been set up with webh
 <ul>
 <li><span style="color:white;background-color:rgb(179,21,100)">Title</span></li>
 <li><span style="color:white;background-color:rgb(162,230,27)">Description</span></li>
-<li><span style="color:white;background-color:rgb(0,77,230)">Label (Deadline)</span></li>
+<li><span style="color:white;background-color:rgb(0,77,230)">Label (deadline)</span></li>
 <li><span style="color:white;background-color:rgb(255,147,255)">Due date</span></li>
 </ul>
 
@@ -66,13 +66,58 @@ Example of how a new deadline could look:
 </ol>
 
 ### Fetch all deadlines
+All relevant deadlines can be fetched in the Discord channel it was originally sent to. To do so: simply use the `/deadlines` command.
 ## Voting
 ### Posting a new vote on Gitlab
-> Fetch all deadlines video goes here
+The voting system is triggered by a special kind of issue in a registered repository.
+
+
+
+<ol>
+<li>Navigate to your desired GitLab project's page</li>
+<li>Go to the <code>Issues</code> page</li>
+<li>Press the <span style="color:white;background-color:dodgerblue">New issue</span> button</li>
+<li>Fill in all the necessary fields:
+<ul>
+<li><span style="color:white;background-color:rgb(179,21,100)">Title</span></li>
+<li><span style="color:white;background-color:rgb(162,230,27)">Description</span></li>
+<li><span style="color:white;background-color:rgb(0,77,230)">Label (vote)</span></li>
+</ul>
+
+Example of how a new vote could look:
+![Example of new vote](.gitlab/new_vote_example.png)
+
+<li>The vote will now appear in Discord
+
+![Example of vote in discord](.gitlab/received_vote.png)
+</li>
+</ol>
+
+#### Important notes regarding the syntax of the vote description
+All titles must be followed by `+==`
+All descriptions except the last must be followed by `+--`
+
+Full vote description example:
+```
+Very important title +==
+Very descriptive description +--
+
+Very important title two +==
+Very descriptive description two
+```
+
+
+
 ### Voting in Discord
-> Fetch all deadlines video goes here
+You vote on matters by simply interacting with the emojis below the vote message.
+
+![Example of interacted vote](.gitlab/interacted_vote.png)
 ### Ending a vote
-> Fetch all deadlines video goes here
+When one of the team members (The project leader for example) finds the voting to be sufficient, one can simply end it by utilizing the `/endvote` command.
+
+![Example of ended vote](.gitlab/voting_has_ended.png)
+
+The message then posted to Discord contains a custom link. Following this link will lead the user to GitLab, with prefilled fields to actually make this new issue.
 
 # Development
 
