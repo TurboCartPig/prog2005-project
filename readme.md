@@ -55,9 +55,14 @@ All deadline issues being created in a repository that has been set up with webh
 <li><span style="color:white;background-color:rgb(255,147,255)">Due date</span></li>
 </ul>
 
+Example of how a new deadline could look: 
 ![Example of new deadline](.gitlab/new_issue_example.png)
 </li>
 <li>Press the <span style="color:white;background-color:dodgerblue">Create issue</span> button</li>
+<li>The deadline will now appear in Discord
+
+![Example of deadline in Discord](.gitlab/received_deadline.png)
+</li>
 </ol>
 
 ### Fetch all deadlines
