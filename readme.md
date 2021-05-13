@@ -18,8 +18,25 @@ The original project idea was based on one of the suggested project idea's in th
 We did however "extend" this functionality to also include a deadline system, notifying the project members of important deadlines.
 
 ## Reflection on what went well, and what went wrong
+
+Generally we are happy about how our project went. And we are especially proud of these aspects of the project:
+* The bot command solution
+* The voting solution
+* The deadline solution
+* The CI and CD
+* The secrets management
+
+A regrettable part of how our project is setup and works, is that it is really hard to test in an automated fashion. This means that all testing must be completed manually, with manual verification. Much of this is that our service does not have any observable output beyond text in a discord channel. If we knew of a way to test for new messages in discord then we  could have done something about this, but as it is, this is not optimal.
+
 ## Reflection on the hard aspects of the project
+
+One of the areas we explored a lot was secrets management, and how to give access to secrets in an agnostic way. Here, we only partially succeeded, going for using GCP's secret manager, and service accounts for authentication and permissions management. We looked into other solutions, but they were either way too difficult to set up, or not really secure. The solution we settled on is much more secure than leaving secrets in plaintext config files or environment variables, but it is closely tied to GCP, which is not great, but acceptable when we use firebase anyway.
+
 ## What new the group has learned
+
+While we had previously touched on a lot of the technologies involved in this project, we learned a lot about how to use them in a real project. Docker for example is something we had experimented with, but now we feel we know how to use it effectively to a much larger degree than before. We think we now have a much better idea of how cloud providers compare to each other, as we experimented a lot with multiple different hosting solutions for this project, and we now have a better basis for making decisions related to these solutions.
+
+Some technologies were also entirely new to us. Like Discord's APIs and how to make a bot, so naturally here we learned a lot.
 
 ## Total work hours dedicated to the project cumulatively by the group
 
