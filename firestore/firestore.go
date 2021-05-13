@@ -14,13 +14,13 @@ import (
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
-// client is the local firestore client.
-var client *firestore.Client
-
 const (
 	ChannelRegistrationsCollection = "channel-registrations"
 	DeadlinesCollection            = "deadlines"
 )
+
+// client is the local firestore client.
+var client *firestore.Client
 
 // NewFirestoreClient creates and initializes a new firestore client.
 func NewFirestoreClient() {
@@ -148,9 +148,9 @@ func DeleteChannelRegistrations(channelID string) error {
 	return err
 }
 
-// GetBotToken gets the discord bot token from google cloud's secret manager.
+// GetBotToken gets the discord bot token from Google cloud's secret manager.
 func GetBotToken() (string, error) {
-	// The name/path to the secret stored in google cloud's secret manager.
+	// The name/path to the secret stored in Google cloud's secret manager.
 	name := "projects/515783087290/secrets/discord-bot-token/versions/latest"
 
 	// Create the client.

@@ -50,7 +50,7 @@ var (
 		},
 	}
 	// CommandHandlers defines what functions to call when slash commands are used
-	CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+	CommandHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
 		"help":      commandHandlerHelp,
 		"sub":       commandHandlerSub,
 		"unsub":     commandHandlerUnsub,
@@ -61,6 +61,8 @@ var (
 
 // Respond with a help message
 func commandHandlerHelp(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Respond with a formatted help message in discord
+	// All errors are ignored, the user can simply try again
 	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionApplicationCommandResponseData{
@@ -114,9 +116,11 @@ func commandHandlerSub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		ChannelID:  i.ChannelID,
 		RepoWebURL: url,
 	}
+
+	// Persistently save the registation
 	firestore.SaveChannelRegistration(&chReg)
 
-	// Respond to the command with a confimation
+	// Respond to the command with a confirmation
 	log.Printf("subscribing from a channel at %s", url)
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -147,7 +151,7 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	// Respond to the command with a confimation
+	// Respond to the command with a confirmation
 	log.Printf("unsubscribing from a channel at %s", url)
 	err = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -155,8 +159,9 @@ func commandHandlerUnsub(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Content: fmt.Sprintf("Unsubscribing from %s", url),
 		},
 	})
+	// Log the failure, the user can try the command again if no feedback is given
 	if err != nil {
-		log.Println("Failed to send subscription confimation")
+		log.Println("Failed to send subscription confirmation")
 	}
 }
 
@@ -172,7 +177,7 @@ func commandHandlerDeadlines(s *discordgo.Session, i *discordgo.InteractionCreat
 	// Get deadlines from firestore
 	deadlines := firestore.GetDeadlinesByRepoURL(repoURL)
 
-	// Build all the feilds for an embed
+	// Build all the fields for an embed
 	var fields []*discordgo.MessageEmbedField
 	for _, elem := range deadlines {
 		fields = append(fields, &discordgo.MessageEmbedField{
@@ -206,7 +211,7 @@ func commandHandlerEndvote(s *discordgo.Session, i *discordgo.InteractionCreate)
 		c <- 1
 	}
 
-	// Acknowledge the command, the processing of the vote is handled elsewere
+	// Acknowledge the command, the processing of the vote is handled elsewhere
 	log.Println("Ending vote")
 	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
