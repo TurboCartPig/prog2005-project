@@ -8,6 +8,16 @@
 This is a Discord bot with two main pieces of functionality. It can extract deadlines from GitLab issue tracker, and it can create decision polls on special issues in GitLab. It does this by using GitLab's webhook interface,
 in order to receive data from GitLab, and simultaneously runs a discord bot, that facilitates user interaction.
 
+# Project report
+## Brief description of the original project plan
+The original project idea was based on one of the suggested project idea's in the course wiki:
+* Decision-making service for OpenSource projects or for group assignments, integrated with Issue tracker (Gitlab, Github or whatever) to allow voting or consensus-finding in case where decisions need to be made that influence the project
+We did however "extend" this functionality to also include a deadline system, notifying the project members of important deadlines.
+## Reflection on what went well, and what went wrong
+## Reflection on the hard aspects of the project
+## What new the group has learned
+## Total work hours dedicated to the project cumulatively by the group
+We have spent roughly 50 hours each on the project, accumulating to a total of **100 hours**.
 # Using the service
 ## General
 ### Registering a new project (repository) on GitLab
