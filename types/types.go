@@ -2,6 +2,7 @@ package types
 
 import "github.com/bwmarrin/discordgo"
 
+// WebhookData is a reduced version of the payload GitLab posts as part of it's webhook.
 type WebhookData struct {
 	EventType string `json:"event_type"`
 	User      User   `json:"user"`
@@ -29,6 +30,7 @@ type WebhookData struct {
 	} `json:"repository"`
 }
 
+// User is a user, part of WebhookData.
 type User struct {
 	ID       int    `json:"id"`
 	Name     string `json:"name"`
@@ -36,6 +38,7 @@ type User struct {
 	Email    string `json:"email"`
 }
 
+// Labels is a label, part of WebhookData.
 type Labels struct {
 	ID          int         `json:"id"`
 	Title       string      `json:"title"`
@@ -45,11 +48,13 @@ type Labels struct {
 	GroupID     interface{} `json:"group_id"`
 }
 
+// ChannelRegistration as stored in firebase.
 type ChannelRegistration struct {
 	ChannelID  string `json:"channel_id"`
 	RepoWebURL string `json:"repo_web_url"`
 }
 
+// Deadline represents a deadline from GitLab as stored in firebase.
 type Deadline struct {
 	RepoWebURL  string `json:"repo_web_url"`
 	Title       string `json:"title"`
@@ -58,6 +63,7 @@ type Deadline struct {
 	DueDate     string `json:"due_date"`
 }
 
+// Vote represnets a vote in discord.
 type Vote struct {
 	RepoWebURL  string   `json:"repo_web_url"`
 	Title       string   `json:"title"`
@@ -65,12 +71,35 @@ type Vote struct {
 	IssueWebURL string   `json:"issue_web_url"`
 }
 
+// Option is an option as part of a vote.
 type Option struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	EmojiCode   string `json:"emoji"`
 }
 
+// Message is an empty interface for all message signals.
+type Message interface{}
+
+// MessageSendComplex sends a complex message in discord.
+type MessageSendComplex struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+}
+
+// MessageSendComplexWithFollowUp sends a message in discord,
+// and follows it up later with a followup function.
+type MessageSendComplexWithFollowUp struct {
+	ChannelID string
+	Message   *discordgo.MessageSend
+	FollowUp  func(messageID, channelID string, object interface{})
+	Object    interface{}
+}
+
+// Shutdown signal for discord.
+type Shutdown struct{}
+
+// VotingEmojis is an emoji that represents a number.
 var VotingEmojis = []string{
 	"1️⃣",
 	"2️⃣",
@@ -82,19 +111,3 @@ var VotingEmojis = []string{
 	"8️⃣",
 	"9️⃣",
 }
-
-type Message interface{}
-
-type MessageSendComplex struct {
-	ChannelID string
-	Message   *discordgo.MessageSend
-}
-
-type MessageSendComplexWithFollowUp struct {
-	ChannelID string
-	Message   *discordgo.MessageSend
-	FollowUp  func(messageID, channelID string, object interface{})
-	Object    interface{}
-}
-
-type Shutdown struct{}
