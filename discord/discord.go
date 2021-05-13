@@ -63,6 +63,7 @@ func RunBot(wg *sync.WaitGroup) {
 	}
 
 	session, err = discordgo.New("Bot " + token)
+	// If the Discord session could not be established.
 	if err != nil {
 		log.Println("Failed to create a discord session\n", err)
 		return
@@ -84,6 +85,7 @@ func RunBot(wg *sync.WaitGroup) {
 
 	// Open the websocket that facilitates communication with discord
 	err = session.Open()
+	// If the opening of the websocket failed
 	if err != nil {
 		log.Println("Failed to open a websocket for communicating with discord\n", err)
 		return
@@ -99,11 +101,13 @@ func RunBot(wg *sync.WaitGroup) {
 		switch t := input.(type) {
 		case types.MessageSendComplex:
 			_, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
+			// If the message failed to send
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
 		case types.MessageSendComplexWithFollowUp:
 			message, err := session.ChannelMessageSendComplex(t.ChannelID, t.Message)
+			// If the message failed to send
 			if err != nil {
 				log.Println("Failed to send message: ", err)
 			}
@@ -133,6 +137,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 	if t, ok := object.(types.Vote); ok {
 		for _, elem := range t.Options {
 			err := session.MessageReactionAdd(channelID, messageID, elem.EmojiCode)
+			// If the adding of reaction failed
 			if err != nil {
 				log.Println(err)
 			}
@@ -140,6 +145,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 		votingChannels[channelID] = make(chan int, 1)
 		<-votingChannels[channelID] // Wait for the /endvote command in the relevant channel
 		votingResults, err := session.ChannelMessage(channelID, messageID)
+		// If the message containing the vote could not be fetched.
 		if err != nil {
 			log.Print("Could not retrieve results of vote")
 			return
@@ -147,15 +153,19 @@ func HandleVote(messageID, channelID string, object interface{}) {
 		highestCount := 0
 		var possibleOptionsForRevote []types.Option
 		for _, elem := range votingResults.Reactions {
+			// If this element has a higher reaction count than the current highest one, update it
 			if elem.Count > highestCount {
 				highestCount = elem.Count
 			}
 		}
 		for i, elem := range votingResults.Reactions {
+			// If the element's count matches the highestCount, add it to the slice of possibleOptionsForRevote
 			if elem.Count == highestCount {
 				possibleOptionsForRevote = append(possibleOptionsForRevote, t.Options[i])
 			}
 		}
+		// If the slice contains more than one element, do a new voting session with the results
+		// that were equally popular.
 		if len(possibleOptionsForRevote) > 1 {
 			t.Options = possibleOptionsForRevote
 			err = session.ChannelMessageDelete(channelID, messageID)
@@ -166,6 +176,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 			SendVoteToDiscord(t)
 		} else {
 			err = session.ChannelMessageDelete(channelID, messageID)
+			// If the 'vote' could not be deleted.
 			if err != nil {
 				log.Print(err)
 			}
@@ -187,6 +198,7 @@ func HandleVote(messageID, channelID string, object interface{}) {
 	}
 }
 
+// Sends a new vote to Discord, initializes the voting logic.
 func SendVoteToDiscord(vote types.Vote) {
 	log.Print("Sending vote to discord")
 	var fields []*discordgo.MessageEmbedField

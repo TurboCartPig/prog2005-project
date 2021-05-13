@@ -40,7 +40,7 @@ func Serve() {
 		log.Printf("%s %s\n", method, route)
 		return nil
 	}
-	// If the walker failed. 
+	// If the walker failed.
 	if err := chi.Walk(router, walkFunc); err != nil {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
