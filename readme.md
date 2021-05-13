@@ -1,4 +1,5 @@
 [![pipeline status](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/badges/master/pipeline.svg)](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/-/commits/master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Table of contents
 
