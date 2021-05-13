@@ -19,7 +19,7 @@ We did however "extend" this functionality to also include a deadline system, no
 
 ## Reflection on what went well, and what went wrong
 
-Generally we are happy about how our project went. And we are especially proud of these aspects of the project:
+Generally we are happy about how our project went. We are especially proud of these aspects of the project:
 * The bot command solution
 * The voting solution
 * The deadline solution

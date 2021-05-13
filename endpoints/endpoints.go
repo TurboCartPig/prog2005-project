@@ -40,6 +40,7 @@ func Serve() {
 		log.Printf("%s %s\n", method, route)
 		return nil
 	}
+	// If the walker failed. 
 	if err := chi.Walk(router, walkFunc); err != nil {
 		log.Panicf("Logging error: %s\n", err.Error())
 	}
@@ -83,7 +84,9 @@ func developer(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 }
 
+// Figures out whether or not a webhook is a 'deadline' or a 'vote', and makes appropriate actions thereafter
 func processWebhook(webhook *types.WebhookData) {
+	// If the webhook is a deadline
 	if isLabel(webhook, "deadline") {
 		deadline := types.Deadline{
 			RepoWebURL:  webhook.Project.WebURL,
@@ -95,11 +98,13 @@ func processWebhook(webhook *types.WebhookData) {
 		firestore.SaveDeadlineToFirestore(&deadline)
 		sendDeadlineToDiscord(&deadline)
 	}
+	// if the webhook is a vote
 	if isLabel(webhook, "vote") {
+		// Divide into different options
 		options := strings.Split(webhook.ObjectAttributes.Description, "+==")
 		var opt []types.Option
 		for i, elem := range options {
-			content := strings.Split(elem, "+--")
+			content := strings.Split(elem, "+--") // Split between title and description
 			opt = append(opt, types.Option{
 				Title:       content[0],
 				Description: content[1],
@@ -116,6 +121,7 @@ func processWebhook(webhook *types.WebhookData) {
 	}
 }
 
+// Sends a 'deadline' to Discord
 func sendDeadlineToDiscord(deadline *types.Deadline) {
 	discordMessage := discordgo.MessageSend{
 		Content: "New deadline posted:",
@@ -139,8 +145,10 @@ func sendDeadlineToDiscord(deadline *types.Deadline) {
 	}
 }
 
+// Checks if a webhook is of a specific label type or not
 func isLabel(webhook *types.WebhookData, labelIdentifier string) bool {
 	for _, label := range webhook.Labels {
+		// If the correct label has been found in the webhook
 		if label.Title == labelIdentifier {
 			return true
 		}
