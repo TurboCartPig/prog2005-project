@@ -1,5 +1,8 @@
 [![pipeline status](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/badges/master/pipeline.svg)](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/-/commits/master)
 
+# Table of contents
+[[_TOC_]]
+
 # Developer bot
 
 This is a Discord bot with two main pieces of functionality. It can extract deadlines from GitLab issue tracker, and it can create decision polls on special issues in GitLab. It does this by using GitLab's webhook interface,
