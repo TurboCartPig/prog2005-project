@@ -180,8 +180,8 @@ server as a binary manually, but you will have a more difficult time deploying i
 
 Both the docker-compose setup and a manual setup requires the presence of a `service-account-key.json` 
 from GCP. This is used both to authorize Firestore and Google Cloud's Secret Manager, the latter is where the
-Discord bot token is stored and accessed securely. The account key requires the roles `INSERT FIRESTORE ADMIN ROLE` 
-and `INSERT SECRET MANAGER SECRET ACCESSOR ROLE`. The key is discovered from the environment variable 
+Discord bot token is stored and accessed securely. The account key requires the roles `Firebase Admin` 
+and `Secret Manager Secret Accessor`. The key is discovered from the environment variable 
 `GOOGLE_APPLICATION_CREDENTIALS`, which contains a path pointing to the service key, default should be 
 `./service-account-key.json`. This is made available to the container through docker-compose's secrets or GCP's
 provisioning.
