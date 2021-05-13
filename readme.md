@@ -1,6 +1,7 @@
 [![pipeline status](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/badges/master/pipeline.svg)](https://git.gvk.idi.ntnu.no/course/prog2005/prog2005-2021-workspace/lindtvedtsebastian/cloud-project/developer-bot/-/commits/master)
 
 # Table of contents
+
 [[_TOC_]]
 
 # Developer bot
@@ -9,18 +10,27 @@ This is a Discord bot with two main pieces of functionality. It can extract dead
 in order to receive data from GitLab, and simultaneously runs a discord bot, that facilitates user interaction.
 
 # Project report
+
 ## Brief description of the original project plan
 The original project idea was based on one of the suggested project idea's in the course wiki:
 * Decision-making service for OpenSource projects or for group assignments, integrated with Issue tracker (Gitlab, Github or whatever) to allow voting or consensus-finding in case where decisions need to be made that influence the project
+
 We did however "extend" this functionality to also include a deadline system, notifying the project members of important deadlines.
+
 ## Reflection on what went well, and what went wrong
 ## Reflection on the hard aspects of the project
 ## What new the group has learned
+
 ## Total work hours dedicated to the project cumulatively by the group
+
 We have spent roughly 50 hours each on the project, accumulating to a total of **100 hours**.
+
 # Using the service
+
 ## General
+
 ### Registering a new project (repository) on GitLab
+
 The URL for registering new webhooks
 ```
 http://34.78.139.9:80/developer
@@ -38,8 +48,15 @@ If everything had been set up correctly, you should be able to see the following
 
 ![Registered webhook](.gitlab/registered_webhook.png)
 
+### Join our development server
+
+https://discord.gg/zp6m2wfqkm
+
+### Add the bot to your server
+
+https://discord.com/oauth2/authorize?client_id=833463919099772998&scope=bot%20applications.commands
+
 ### Registering a new project (repository) in a Discord server
-> PUT INVITE LINK TO THE TEST SERVER HERE
 <ol>
 <li>Navigate to a Discord server which has the developer-bot added to it</li>
 <li>Type in the <code>/sub</code> command, followed by the relevant project's URL</li>
@@ -118,8 +135,6 @@ Very descriptive description +--
 Very important title two +==
 Very descriptive description two
 ```
-
-
 
 ### Voting in Discord
 You vote on matters by simply interacting with the emojis below the vote message.
