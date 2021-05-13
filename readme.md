@@ -26,6 +26,8 @@ Generally we are happy about how our project went. We are especially proud of th
 * The CI and CD
 * The secrets management
 
+We are also particularly happy with the Discord bot. The use of slash commands, a brand new feature in discord, worked our particularly well, and makes the bot feel well integrated and professional. The UI and general UX of the bot is also something we are happy with.
+
 A regrettable part of how our project is setup and works, is that it is really hard to test in an automated fashion. This means that all testing must be completed manually, with manual verification. Much of this is that our service does not have any observable output beyond text in a discord channel. If we knew of a way to test for new messages in discord then we  could have done something about this, but as it is, this is not optimal.
 
 ## Reflection on the hard aspects of the project
@@ -35,6 +37,8 @@ One of the areas we explored a lot was secrets management, and how to give acces
 ## What new the group has learned
 
 While we had previously touched on a lot of the technologies involved in this project, we learned a lot about how to use them in a real project. Docker for example is something we had experimented with, but now we feel we know how to use it effectively to a much larger degree than before. We think we now have a much better idea of how cloud providers compare to each other, as we experimented a lot with multiple different hosting solutions for this project, and we now have a better basis for making decisions related to these solutions.
+
+Part of learning docker also involved how to use it for writing continues integration and continues deployment with the use of GitLabs builtin CI solution. The solution we came up with is not necessarily the best, but since this is the first time we use something like this, we did learn a lot about it.
 
 Some technologies were also entirely new to us. Like Discord's APIs and how to make a bot, so naturally here we learned a lot.
 
