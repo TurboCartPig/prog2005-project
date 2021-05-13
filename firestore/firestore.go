@@ -27,11 +27,13 @@ func NewFirestoreClient() {
 	// Use GOOGLE_APPLICATION_CREDENTIALS env var to find the service account key
 	ctx := context.Background()
 	app, err := firebase.NewApp(ctx, nil)
+	// If a new firebase app could not be created
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	client, err = app.Firestore(ctx)
+	// If the firestore client could not be created.
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -46,7 +48,7 @@ func ShutdownClient() {
 func SaveDeadlineToFirestore(deadline *types.Deadline) {
 	ctx := context.Background()
 	_, _, err := client.Collection(DeadlinesCollection).Add(ctx, *deadline)
-
+	// If the deadline could not be added to firestore.
 	if err != nil {
 		log.Println(err)
 	}
@@ -56,6 +58,7 @@ func SaveDeadlineToFirestore(deadline *types.Deadline) {
 func SaveChannelRegistration(channelRegistration *types.ChannelRegistration) {
 	ctx := context.Background()
 	_, err := client.Collection(ChannelRegistrationsCollection).Doc(channelRegistration.ChannelID).Set(ctx, *channelRegistration)
+	// If the channelRegistration could not be added to firestore.
 	if err != nil {
 		log.Println(err)
 	}
@@ -91,6 +94,7 @@ func GetRepoURLByChannelID(channelID string) (string, error) {
 	ctx := context.Background()
 	docref := client.Collection(ChannelRegistrationsCollection).Doc(channelID)
 	docsnap, err := docref.Get(ctx)
+	// If the document could not get fetched 
 	if err != nil {
 		log.Println("Failed to get document from firebase:", err)
 		return "", err
@@ -98,6 +102,7 @@ func GetRepoURLByChannelID(channelID string) (string, error) {
 
 	var cr types.ChannelRegistration
 	err = docsnap.DataTo(&cr)
+	// If the document could not be converted to a ChannelRegistration struct
 	if err != nil {
 		log.Println("Failed to parse the document into ChannelRegistration")
 		return "", err
@@ -123,11 +128,13 @@ func GetDeadlinesByRepoURL(repoURL string) []types.Deadline {
 
 		var deadline types.Deadline
 		err = doc.DataTo(&deadline)
+		// If the document could not be converted to a Deadline struct
 		if err != nil {
 			log.Println("Failed to parse document into Deadline", err)
 			continue
 		}
 
+		// If the duedate of the deadline has expired, delete it from firestore and don't add them to the slice.
 		if deadline.DueDate < time.Now().String()[:10] {
 			_, err = client.Collection(DeadlinesCollection).Doc(doc.Ref.ID).Delete(ctx)
 			if err != nil {
@@ -156,6 +163,7 @@ func GetBotToken() (string, error) {
 	// Create the client.
 	ctx := context.Background()
 	client, err := secretmanager.NewClient(ctx)
+	// If the secretmanager client could not be created
 	if err != nil {
 		log.Printf("failed to create secretmanager client: %v", err)
 		return "", err
